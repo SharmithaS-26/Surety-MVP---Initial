@@ -1,7 +1,4 @@
 """
-main.py
-CQ Ingestion Pipeline
-
 Usage:
     python main.py                                    # auto-finds PDF in data/
     python main.py --pdf path/to/form.pdf             # specific PDF

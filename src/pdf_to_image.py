@@ -1,9 +1,3 @@
-"""
-pdf_to_image.py
-Converts each page of a PDF to a high-resolution PIL Image.
-DPI=300 is critical for EasyOCR accuracy on scanned forms.
-"""
-
 import fitz  # PyMuPDF
 from PIL import Image
 import io

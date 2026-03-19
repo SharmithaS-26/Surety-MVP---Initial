@@ -1,15 +1,3 @@
-"""
-pymupdf_engine.py
-Extracts text from a digital PDF using PyMuPDF — zero OCR noise.
-
-This PDF has TWO text layers (display + form field layer), causing each
-word to appear twice at slightly different coordinates. We deduplicate
-at the RAW WORD level before any grouping, using a tight spatial match.
-
-Token format identical to ocr_engine.py output.
-Coordinates scaled from PDF points (72 dpi) to 300 DPI pixels.
-"""
-
 import fitz
 
 DPI   = 300
@@ -28,9 +16,7 @@ def extract_tokens(pdf_path: str, page_num: int = 0) -> list[dict]:
     if not words:
         return []
 
-    # ── Step 1: Deduplicate raw words BEFORE grouping ─────────────────────────
-    # This PDF has two text layers; each word appears twice at ~same position.
-    # Keep only the first occurrence of any word within DEDUP_PT points.
+    
     sorted_w = sorted(words, key=lambda w: (w[1], w[0]))  # top-left first
     deduped_words = []
     for w in sorted_w:
@@ -61,9 +47,7 @@ def extract_tokens(pdf_path: str, page_num: int = 0) -> list[dict]:
                 current = [w]
         lines.append(sorted(current, key=lambda w: w[0]))
 
-    # ── Step 4: Group words into tokens by horizontal proximity ───────────────
-    # Words with gap <= 15pt are joined into one token
-    # Words with gap > 15pt become separate tokens (preserves label|value split)
+    
     tokens = []
     for line in lines:
         groups, cur = [], [line[0]]
@@ -107,10 +91,7 @@ def extract_all_pages(pdf_path: str) -> list[list[dict]]:
 
 def is_digital_pdf(pdf_path: str, page_num: int = 0,
                    min_words: int = 20) -> bool:
-    """
-    Returns True if the PDF has a real text layer (digital/born-digital).
-    Returns False if it appears to be a scanned image.
-    """
+    
     doc   = fitz.open(pdf_path)
     page  = doc[page_num]
     words = page.get_text("words")

@@ -1,28 +1,3 @@
-"""
-debug_visualizer.py
-Draws OCR tokens and detected checkboxes on page images so you can
-verify coordinates and fix any parser issues.
-
-Usage:
-    python debug_visualizer.py --pdf data/form.pdf --page 3
-    python debug_visualizer.py --pdf data/form.pdf --all-pages
-
-Outputs per page (in temp_images/):
-    debug_page_N_original.png   — raw page image
-    debug_page_N_tokens.png     — OCR bounding boxes + text + Y ruler
-    debug_page_N_checkboxes.png — checkbox detections (green=checked, red=unchecked)
-    debug_page_N_combined.png   — both overlaid  ← open this one
-    debug_page_N_report.txt     — all tokens and checkboxes with cy coordinates
-
-How to use the combined image:
-    - Blue boxes  = OCR tokens (text shown above box with cy coordinate)
-    - Green boxes = checked checkboxes
-    - Red boxes   = unchecked checkboxes
-    - Yellow lines = Y-axis ruler every 50 px
-    If a field is being extracted wrongly, read the cy value off the ruler
-    next to that row and report it — the parser can be adjusted.
-"""
-
 import argparse
 import os
 import sys
@@ -168,15 +143,7 @@ def save_report(tokens: list[dict], boxes: list[dict], path: str) -> None:
 
 
 def visualize_page(images: list, page_num: int, out_dir: str) -> None:
-    """
-    Generate all debug outputs for one page.
-
-    Args:
-        images:   Pre-loaded list of PIL Images (from convert_pdf_to_images).
-                  PDF is loaded ONCE externally and passed in — not reloaded here.
-        page_num: 1-based page number.
-        out_dir:  Directory to write debug output files.
-    """
+    
     os.makedirs(out_dir, exist_ok=True)
     idx = page_num - 1
 

@@ -1,9 +1,3 @@
-"""
-utils.py
-Shared spatial helpers, text-cleaning utilities, and Yes/No resolution logic
-used by all page parsers.
-"""
-
 import re
 import json
 import os
@@ -47,12 +41,7 @@ def join_row_tokens(tokens: list[dict]) -> str:
 # ── Adaptive row clustering ───────────────────────────────────────────────────
 
 def cluster_rows(tokens: list[dict], gap: int = 14) -> list[list[dict]]:
-    """
-    Group tokens into rows by vertical proximity.
-    Tokens whose cy values differ by <= gap px are in the same row.
-    Returns a list of rows (each row = list of tokens sorted left→right),
-    sorted top→bottom.
-    """
+    
     if not tokens:
         return []
     sorted_toks = sorted(tokens, key=lambda t: t["cy"])
@@ -77,11 +66,7 @@ def row_text(row: list[dict]) -> str:
 
 
 def find_row(rows: list[list[dict]], *keywords, skip: int = 0) -> list[dict]:
-    """
-    Return the first row whose text contains ALL given keywords (case-insensitive).
-    skip: skip the first N matching rows (useful when a keyword appears twice).
-    Returns [] if not found.
-    """
+    
     found = 0
     for row in rows:
         rt = row_text(row).lower()
@@ -142,17 +127,11 @@ def checkbox_on_row(boxes: list[dict], cy: int,
     )
 
 
-# ── Yes/No resolution ─────────────────────────────────────────────────────────
-#
-# checkbox_detector inspects pixel regions left of every Yes/No token and
-# emits a box entry for EACH with checked=True/False and a label field.
+
 
 def resolve_yn_from_checkboxes(boxes_on_row: list[dict],
                                 row_tokens: Optional[list[dict]] = None) -> Optional[str]:
-    """
-    Given checkbox boxes on a Yes|No row, return "Yes", "No", or None.
-    Each box has a label field ("Yes" or "No") and a checked bool.
-    """
+    
     if not boxes_on_row:
         return None
 

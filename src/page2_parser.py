@@ -1,7 +1,3 @@
-"""
-page2_parser.py (merged-token aware rewrite)
-Handles EasyOCR merging label+value into single tokens.
-"""
 import re
 from .utils import (
     cluster_rows, find_row, after_kw, between_kw,

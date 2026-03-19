@@ -1,22 +1,3 @@
-"""
-ocr_engine.py
-Runs EasyOCR on a PIL Image and returns word-level tokens with
-bounding box coordinates and confidence scores.
-
-Token format:
-    {
-        "text":  str,
-        "x":     int,   # left edge (pixels)
-        "y":     int,   # top edge
-        "x2":    int,   # right edge
-        "y2":    int,   # bottom edge
-        "cx":    int,   # horizontal center
-        "cy":    int,   # vertical center
-        "conf":  float, # EasyOCR confidence 0-1
-        "page":  int    # 0-based page index
-    }
-"""
-
 import easyocr
 import numpy as np
 from PIL import Image

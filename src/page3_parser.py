@@ -1,18 +1,3 @@
-"""
-page3_parser.py  (robust)
-Parses Page 3 of the Built Right CQ scanned form.
-
-Sections:
-  • Banking
-  • Project Experience  (5 largest completed contracts, 2-row entries)
-  • References          (3 sub-tables: Subcontractors, Owners & Architects, Suppliers)
-
-All table parsing uses adaptive row clustering — no hard-coded Y values.
-Section boundaries are found by keyword scanning the token stream.
-Project entries are anchored by number tokens (1. / 2. / … / 5.).
-Reference sub-tables are located by their header keywords.
-"""
-
 import re
 from .utils import (
     cluster_rows, find_row, after_kw, between_kw,

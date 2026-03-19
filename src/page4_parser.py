@@ -1,12 +1,3 @@
-"""
-page4_parser.py
-Parses Page 4 of the Built Right CQ scanned form.
-
-Sections:
-  • Bond Required Documents checklist  (10 items, each with a checkbox)
-  • Signature section  (Signature, Printed Name, Date)
-"""
-
 from .utils import (
     cluster_rows, find_row, after_kw,
     tokens_in_region, join_row_tokens,

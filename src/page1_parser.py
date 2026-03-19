@@ -1,17 +1,3 @@
-"""
-page1_parser.py
-Parses Page 1 of the Built Right CQ scanned form.
-
-KEY LESSONS from token dump analysis:
-  1. EasyOCR often puts the VALUE token ABOVE the LABEL token in Y coordinate
-     (value is in larger/bolder font, rendered at slightly higher position)
-  2. Label and value are sometimes separate tokens, sometimes merged
-  3. Contact name "Butch Taylor, Jr." may be missed entirely or merged
-  
-Strategy: for each field, search ALL tokens within a Y-proximity band
-of the label token, looking both above and below.
-"""
-
 import re
 from .utils import (
     cluster_rows, find_row, join_row_tokens,
@@ -37,17 +23,7 @@ def _find_label_token(tokens, *keywords):
 
 
 def _extract(tokens, *keywords, stop_keywords=None, search_above=True):
-    """
-    Extract value associated with a label keyword.
     
-    Searches for a token containing the keyword, then extracts:
-    1. Everything after the keyword in the same token (merged case)
-    2. Tokens to the RIGHT on the same row
-    3. Tokens ABOVE the label (value rendered higher due to larger font)
-    
-    Args:
-        search_above: Also look at tokens with cy slightly above the label token
-    """
     stop_kws = [k.lower() for k in (stop_keywords or [])]
     all_rows = cluster_rows(tokens)
     
