@@ -1,0 +1,150 @@
+======================================================================
+OCR TOKENS  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   conf  text
+----------------------------------------------------------------------
+  173   1336   0.83  BUSINESS INFORMATION
+  269    664   0.61  Type of Work Performed:_ReadBuiltler
+  341   1068   0.20  Aqhalt, Goncteteandtlttilities
+  347    477   1.00  Trades Self Performed:
+  422    473   1.00  Trades Subcontracted:
+  493   1307   0.30  Geographic Territory CantblHlotitla
+  495    320   0.81  Union
+  497    638   0.76  Non-Union
+  565   1414   0.99  Bid:95
+  566   2022   0.61  Negotiated: 5
+  568   1644   1.00  %
+  571    762   0.60  What percent of your company' s work is acquired by:
+  636   1441   0.90  Public: 95
+  641   1696   1.00  %
+  641   1981   0.79  Private:5_
+  645    649   0.73  What percent of your company s work is:
+  715   1484   1.00  Yes
+  716    737   0.87  Doyou require subcontractors to provide bonds to
+  716   1652   1.00  No
+  716   1924   0.85  Ifyes, for work over $
+  717   1262   1.00  you?
+  778    988   0.35  sSOMM
+  783   1366   0.88  Year:2024
+  783   1875   0.99  Number of Contracts: 100
+  789    581   0.97  Largest Cost to Complete Backlog:
+  857    628   0.69  Desired Bond Program_Single $2OMM
+  860   1454   0.36  Aggregate $ TEBWN
+  931   1397   0.96  Ifyes, Name of Surety:Markel Surety
+  935    733   1.00  Yes
+  935    899   1.00  No
+  937    439   0.90  Currently Bonded?
+  997   1066   0.81  Has your firm or any of its principals failed to complete a contract or required financial
+ 1021   2200   0.55  Yes
+ 1023   2368   1.00  No
+ 1051    607   0.81  assistance from a bonding company?
+ 1119   2200   1.00  Yes
+ 1120   2369   1.00  No
+ 1121   1038   0.93  Has your firm or any of its principals petitioned for bankruptcy in the last 10 years?
+ 1198   2200   1.00  Yes
+ 1198   2369   1.00  No
+ 1200    925   0.90  Are there any business or personal judgments, suits or claims pending?
+ 1270    858   0.83  #*Ifyes to any of the above, attach an explanation**
+ 1344   2200   1.00  Yes
+ 1345    962   0.85  Is there a written Buy-Sell Agreement? If yes, please provide us with a copy
+ 1345   2367   1.00  No
+ 1422   2199   1.00  Yes
+ 1423   2367   1.00  No
+ 1425   1031   0.92  Are there any assets held in trust or pledged by company of stockholders/owners?
+ 1495   2200   1.00  Yes
+ 1495   2367   1.00  No
+ 1496    780   0.81  If yes, will the trust indemnify the surety?
+ 1564   1336   0.72  Subsidiaries, Affiliates & Related Firms
+ 1627   1151   0.65  Is the firm or any of its stockholders connected with any other company as a subsidiary, parent;
+ 1653   2200   1.00  Yes
+ 1655   2367   1.00  No
+ 1682    695   0.88  holding or affiliate? If yes,please detail below:
+ 1741   2253   0.71  Willing to
+ 1766    368   0.99  Firm Name
+ 1768   1211   1.00  Ownership Percentage
+ 1770   1697   0.99  Type of Business
+ 1798   2253   1.00  Indemnify
+ 1861   2200   1.00  Yes
+ 1861   2370   1.00  No
+ 1933   2198   1.00  Yes
+ 1933   2369   1.00  No
+ 2008   2370   1.00  No
+ 2009   2198   1.00  Yes
+ 2083   2369   1.00  No
+ 2084   2200   1.00  Yes
+ 2160   1335   0.75  FINANCIAL INFORMATION
+ 2237    608   0.81  Name of CPA firm: On-time CPA's
+ 2315    876   0.30  CPA Address: A~OGopoarete Wey Tanpa, Florida 33609
+ 2387   1665   0.44  Email Address:Rean@OXPRaaom
+ 2388    608   0.90  CPA Contact:Bean Counter, CPA
+ 2461    473   0.97  Fiscal Year End?12/31
+ 2466   1634   0.77  How many years has this firm prepared your financial statement?3
+ 2536   1112   0.72  Cash
+ 2536   1832   0.65  Accrual
+ 2537   2224   1.00  % of Completion
+ 2538   1454   1.00  Completed Job
+ 2540    580   0.76  On what basis are taxes prepared
+ 2604   1370   0.61  Cash
+ 2604   1988   1.00  Accrual
+ 2606   1671   1.00  Completed Job
+ 2606   2265   0.90  % of Comp
+ 2607    751   0.90  On what basis are the financial statements prepared
+ 2671   1447   0.95  CPA Audit
+ 2673   1777   1.00  CPA Review
+ 2676   2148   1.00  Compilation
+ 2677    723   0.71  On what level are financial statements prepared?
+ 2742    630   0.71  Is there a full-time accountant on staff?
+ 2743   1357   1.00  No
+ 2744   1188   1.00  Yes
+ 2816    604   0.47  Accounting Software: @tilitkbobks
+ 2892    579   0.67  Estimating Software:lleayyBid
+ 2966    531   0.42  Job Cost Software:Htooore
+ 3061   1338   1.00  2
+ 3066   1235   0.99  Page
+
+======================================================================
+CHECKBOXES  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   checked     style
+----------------------------------------------------------------------
+  495    320     False     empty
+  497    638     False     empty
+  715   1484     False     empty
+  716   1652      True    filled
+  935    733      True    filled
+  935    899     False     empty
+ 1021   2200     False     empty
+ 1023   2368      True    filled
+ 1119   2200     False     empty
+ 1120   2369      True    filled
+ 1198   2200     False     empty
+ 1198   2369      True    filled
+ 1344   2200     False     empty
+ 1345   2367      True    filled
+ 1422   2199     False     empty
+ 1423   2367      True    filled
+ 1495   2200     False     empty
+ 1495   2367     False     empty
+ 1653   2200     False     empty
+ 1655   2367      True    filled
+ 1861   2200     False     empty
+ 1861   2370     False     empty
+ 1933   2198     False     empty
+ 1933   2369     False     empty
+ 2008   2370     False     empty
+ 2009   2198     False     empty
+ 2083   2369     False     empty
+ 2084   2200     False     empty
+ 2536   1112     False     empty
+ 2536   1832     False     empty
+ 2537   2224      True    filled
+ 2538   1454     False     empty
+ 2604   1370     False     empty
+ 2604   1988     False     empty
+ 2606   1671      True    filled
+ 2606   2265     False     empty
+ 2671   1447     False     empty
+ 2673   1777      True      tick
+ 2676   2148     False     empty
+ 2743   1357     False     empty
+ 2744   1188      True    filled

@@ -1,0 +1,45 @@
+======================================================================
+OCR TOKENS  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   conf  text
+----------------------------------------------------------------------
+  158   1346   0.83  PLEASE PROVIDE THE FOLLOWING INFORMATION FOR BOND NEEDS OVER 500,000
+  281   1134   0.80  Year End 12/31 Financial Statement; CPA preferred if available
+  409   1461   0.76  Most recently reconciled month end accrual financial statements (Balance Sheet, Profit& Loss,
+  469   1074   0.84  Accounts Receivable Reports, Accounts Payable Reports)
+  589    724   0.80  Work in Process (WIP)
+  710    713   0.85  Bank Reference Form
+  835   1064   0.75  of Bank Line of Credit agreement, If available
+  837    548   1.00  Copy
+  955    938   0.81  Personal Financial Statement for all owners
+ 1081    786   0.90  Last 3 Corporate tax Returns
+ 1199    739   0.78  Resumes of owners and
+ 1199   1023   0.98  key
+ 1199   1293   0.92  personnel, If available
+ 1320    889   0.89  Letters of recommendation, if avaiable
+ 1442    755   0.82  Business Plan, if available
+ 1532   1304   0.86  The undersigned expressly authorizes Nielson Hoover & Company and/or the surety companies they represent to make inquiries as necessary concerning
+ 1575   1305   0.72  pertaining to the undersigned's financial standing, credit, character or method of meeting obligations to verify the accuracy of the statements made
+ 1576    282   0.96  or
+ 1616   1306   0.76  and to determine mylour credit worthiness. I/WE certify the above and the statements contained in this Application and any and all attachments are true
+ 1657   1297   0.70  and accurate as of the stated date: A copy of this agreement shall be considered the same as the original: This authorization is to remain in full force and
+ 1694   2068   0.76  understand that false
+ 1696   1079   0.71  effect until rescinded by the applicant in writing: These statements are made for the purpose of obtaining a surety bond.
+ 1735    885   0.67  statement may result in forfeiture of benefits and possible criminal and/or civil prosecution_
+ 1857    778   1.00  Any
+ 1858    493   0.88  F.S. section 817.234(1)(b),
+ 1858   1567   0.79  person who knowingly and with intent to injure, defraud, or deceive any insurer files a
+ 1907    479   0.81  statement of claim or an
+ 1909   1507   0.89  application containing false, incomplete, or misleading information is guilty of a felony of the
+ 1960    380   0.48  third degree:_
+ 2022   1239   1.00  Printed Name:
+ 2022   1876   1.00  Date:
+ 2023    372   1.00  Signature:
+ 3008   1346   1.00  4
+ 3010   1239   1.00  Page
+
+======================================================================
+CHECKBOXES  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   checked     style
+----------------------------------------------------------------------

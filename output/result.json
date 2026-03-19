@@ -1,0 +1,222 @@
+{
+  "general_information": {
+    "company_name": "BuiltRight, LLC",
+    "address": "2155 West 4th Street",
+    "phone": "727-345-0510",
+    "primary_contact": "Butch Taylor, Jr.",
+    "email": "btyalorjr@builtright.com",
+    "type_of_business": [
+      "LLC"
+    ],
+    "date_business_started": "09/01/75",
+    "fed_tax_id": "00-00000",
+    "primary_naics_code": "236220",
+    "number_of_employees": "100",
+    "special_designations": []
+  },
+  "owners": [
+    {
+      "name": "Butch Taylor, Sr.",
+      "title": "President",
+      "ownership_pct": "100",
+      "address": "200 Birch Lane",
+      "city_state_zip": "St. Petersburg, FL 33713",
+      "dob": "5/10/1950",
+      "ssn": "786-52-0912",
+      "spouse": {
+        "name": "Elizabeth Taylor",
+        "dob": "",
+        "ssn": ""
+      }
+    }
+  ],
+  "personal_indemnification": "No",
+  "business_information": {
+    "type_of_work_performed": "Road Builder",
+    "trades_self_performed": "Asphalt, Concrete and Utilities",
+    "trades_subcontracted": "Subcontract 100% outside of minor punch list and carpentry. Have considered 100% outside of minor punch list and carpentry. Have considered adding in-house electrical.",
+    "union_status": null,
+    "geographic_territory": "Central Florida",
+    "work_acquired_bid_pct": "95",
+    "work_acquired_negotiated_pct": "5",
+    "work_public_pct": "95",
+    "work_private_pct": "5",
+    "subcontractor_bonds_required": null,
+    "sub_bond_threshold": "",
+    "largest_cost_to_complete": "50MM",
+    "backlog_year": "2024",
+    "number_of_contracts": "100",
+    "desired_bond_single": "20MM",
+    "desired_bond_aggregate": "75MM",
+    "currently_bonded": null,
+    "surety_name": "Markel Surety",
+    "failed_to_complete_contract": "No",
+    "petitioned_for_bankruptcy": "No",
+    "judgments_suits_claims": "No",
+    "buy_sell_agreement": "No",
+    "assets_held_in_trust": "No",
+    "trust_will_indemnify_surety": "N/A",
+    "connected_to_other_company": "No",
+    "subsidiaries_affiliates": []
+  },
+  "financial_information": {
+    "cpa_firm": "On-time CPA's",
+    "cpa_address": "2120 Corporate Way Tampa, Florida 33609",
+    "cpa_contact": "Bean Counter, CPA",
+    "cpa_email": "Bean@OTCPA.com",
+    "fiscal_year_end": "12/31",
+    "years_prepared_statements": "3",
+    "tax_basis": [
+      "% of Completion"
+    ],
+    "financial_statement_basis": [
+      "Completed Job"
+    ],
+    "financial_statement_level": [
+      "CPA Review"
+    ],
+    "fulltime_accountant_on_staff": "Yes",
+    "accounting_software": "Quickbooks",
+    "estimating_software": "Heavy Bid",
+    "job_cost_software": "Procore"
+  },
+  "banking": {
+    "bank_name": "Bank of Tampa",
+    "contact_name": "Jordan Belfort, VP",
+    "bank_address": "1 N Dale Mabry HWY Tampa, Florida 33609",
+    "bank_phone": "Contract",
+    "bank_email": "",
+    "line_of_credit": "Yes",
+    "total_line_of_credit": "500,000",
+    "amount_available": "fully available",
+    "expires": "",
+    "how_secured": "Fixed assets, AR, Personal Guarantee"
+  },
+  "projects": [
+    {
+      "project_number": "1",
+      "project_name": "",
+      "year_complete": "",
+      "final_contract_price": "",
+      "gross_profit": "",
+      "for_whom_contact": "Pinellas County"
+    },
+    {
+      "project_number": "2",
+      "project_name": "FDOT",
+      "year_complete": "2022",
+      "final_contract_price": " 7.5MM",
+      "gross_profit": " 500M",
+      "for_whom_contact": "Hillsboro County"
+    },
+    {
+      "project_number": "3",
+      "project_name": "FDOT",
+      "year_complete": "2024",
+      "final_contract_price": " 2.5MM",
+      "gross_profit": " 200M",
+      "for_whom_contact": "Pinellas County"
+    },
+    {
+      "project_number": "4",
+      "project_name": "",
+      "year_complete": "",
+      "final_contract_price": "",
+      "gross_profit": "",
+      "for_whom_contact": ""
+    },
+    {
+      "project_number": "5",
+      "project_name": "",
+      "year_complete": "",
+      "final_contract_price": "",
+      "gross_profit": "",
+      "for_whom_contact": ""
+    }
+  ],
+  "references": {
+    "major_subcontractors": [
+      {
+        "company": "Cool Mechanical",
+        "phone": "",
+        "contact": "Ken Freeze"
+      },
+      {
+        "company": "Civil Dirtworks",
+        "phone": "",
+        "contact": "Jim Tracks"
+      },
+      {
+        "company": "Millworkers International International",
+        "phone": "",
+        "contact": "Woody Roberts"
+      },
+      {
+        "company": "Empowered Electrical Electrical",
+        "phone": "",
+        "contact": "Frank Voltz"
+      }
+    ],
+    "owners_and_architects": [
+      {
+        "company": "Spring Engineering",
+        "phone": "813-875-0987",
+        "contact": "Gustav Eiffel"
+      }
+    ],
+    "suppliers": [
+      {
+        "company": "ABC Supply House House",
+        "phone": "813-800-9000",
+        "contact": "Jim Woodman"
+      }
+    ]
+  },
+  "bond_required_documents": [
+    {
+      "item": "Year End 12/31 Financial Statement, CPA preferred if available",
+      "checked": false
+    },
+    {
+      "item": "Most recently reconciled month end accrual financial statements (Balance Sheet, Profit & Loss, Accounts Receivable Reports, Accounts Payable Reports)",
+      "checked": false
+    },
+    {
+      "item": "Work in Process (WIP)",
+      "checked": false
+    },
+    {
+      "item": "Bank Reference Form",
+      "checked": false
+    },
+    {
+      "item": "Copy of Bank Line of Credit agreement, if available",
+      "checked": false
+    },
+    {
+      "item": "Personal Financial Statement for all owners",
+      "checked": false
+    },
+    {
+      "item": "Last 3 Corporate tax Returns",
+      "checked": false
+    },
+    {
+      "item": "Resumes of owners and key personnel, if available",
+      "checked": false
+    },
+    {
+      "item": "Letters of recommendation, if available",
+      "checked": false
+    },
+    {
+      "item": "Business Plan, if available",
+      "checked": false
+    }
+  ],
+  "signature_section": {
+    "signature": "",
+    "printed_name": "",
+    "date": ""
+  }
+}

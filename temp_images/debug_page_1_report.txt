@@ -1,0 +1,110 @@
+======================================================================
+OCR TOKENS  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   conf  text
+----------------------------------------------------------------------
+  222   1470   0.77  ACRIS U RE
+  493   1310   0.72  CONTRACTORS QUESTIONNAIRE
+  732   1327   0.96  GENERAL INFORMATION
+  832    814   0.59  Builtaight;LLC
+  848    420   0.90  Company Name:
+  909    588   0.44  Address:2655West4th Steeet
+  909   1936   0.52  Phone No.:7217334586F0 0
+  987   1801   0.46  Email Address: ttyalejjr@builtrightoem
+  996    423   0.98  Primary Contact:
+ 1068   1324   1.00  LLC
+ 1068   2259   1.00  Joint Venture
+ 1069   1536   1.00  LLP
+ 1069   1854   1.00  Proprietorship
+ 1070    427   1.00  Type of Business:
+ 1070    761   0.86  "C" Corp
+ 1071   1062   0.89  "S" Corp
+ 1136   1594   0.33  Fed Tax ID #: (QAOOOO
+ 1138    582   0.37  Date Business Started: (0900.1735
+ 1215    553   0.66  Primary NAICS Code: 288200
+ 1215   1626   0.63  Number of Employees: l100
+ 1294    765   1.00  8A
+ 1294    989   1.00  HUBZone
+ 1294   1237   1.00  WOB
+ 1294   1435   1.00  VOB
+ 1294   1904   1.00  Other
+ 1295   1661   1.00  SDVOSB
+ 1298    463   1.00  Special Designations:
+ 1369   1038   0.94  CORPORATE OFFICERS-STOCKHOLDERS
+ 1369   1724   1.00  INDEMNITOR INFORMATION
+ 1467    600   0.76  Butch Taylor, Sr:
+ 1474    321   1.00  Name
+ 1474   1414   1.00  Name
+ 1541    431   0.44  Title   #Reerieent
+ 1549   1007   0.99  % of Ownership 100
+ 1549   1397   1.00  Title
+ 1550   2046   0.79  % of Ownership
+ 1614    889   0.92  200 Blrch Lane
+ 1622    341   1.00  Address
+ 1622   1433   1.00  Address
+ 1691    609   0.76  St.
+ 1693    897   0.35  Fetetehgrg,HL38183
+ 1701    401   0.96  City*State*Zip
+ 1701   1495   1.00  City*State*Zip
+ 1766   1078   0.60  7865520942
+ 1774    307   1.00  DOB
+ 1774    862   1.00  SSN
+ 1774   1399   1.00  DOB
+ 1774   1953   1.00  SSN
+ 1844    625   0.84  Elizabeth Taylor
+ 1852    332   1.00  Spouse
+ 1855   1423   0.62  Spouse
+ 1916    511   1.00  06/01/1955
+ 1917   1073   0.68  786-43-0129
+ 1924    307   1.00  DOB
+ 1924    862   1.00  SSN
+ 1924   1400   1.00  DOB
+ 1924   1955   1.00  SSN
+ 2075    321   1.00  Name
+ 2075   1415   1.00  Name
+ 2149   2046   0.70  % of Ownership
+ 2150    306   1.00  Title
+ 2150   1398   1.00  Title
+ 2151    958   0.73  % of Ownership
+ 2225    339   1.00  Address
+ 2225   1433   1.00  Address
+ 2300    401   1.00  City*State*Zip
+ 2302   1495   1.00  City*State*Zip
+ 2374    307   1.00  DOB
+ 2374    862   1.00  SSN
+ 2374   1399   1.00  DOB
+ 2374   1953   0.90  SSN
+ 2455    332   0.79  Spouse
+ 2455   1423   0.85  Spouse
+ 2523    307   1.00  DOB
+ 2523    867   1.00  SSN
+ 2523   1399   1.00  DOB
+ 2524   1953   1.00  SSN
+ 2589   2182   1.00  Yes
+ 2590   2350   1.00  No
+ 2591   1058   0.72  Will all owners and their spouses provide full personal indemnification to the Surety?
+ 2657    275   1.00  If
+ 2661    333   0.97  No,
+ 2664    414   0.99  why
+ 3012   1346   1.00  1
+ 3016   1240   1.00  Page
+
+======================================================================
+CHECKBOXES  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   checked     style
+----------------------------------------------------------------------
+ 1068   1324      True    filled
+ 1068   2259     False     empty
+ 1069   1536     False     empty
+ 1069   1854     False     empty
+ 1070    761     False     empty
+ 1071   1062     False     empty
+ 1294    765     False     empty
+ 1294    989     False     empty
+ 1294   1237     False     empty
+ 1294   1435     False     empty
+ 1294   1904     False     empty
+ 1295   1661     False     empty
+ 2589   2182     False     empty
+ 2590   2350      True    filled

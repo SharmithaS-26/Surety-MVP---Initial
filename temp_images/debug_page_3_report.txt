@@ -1,0 +1,79 @@
+======================================================================
+OCR TOKENS  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   conf  text
+----------------------------------------------------------------------
+  164   1328   1.00  BANKING
+  262    505   0.53  Name of Bank: Rakaf
+  263   1523   0.53  Contact Name
+  266    821   0.33  [Tanpa
+  338    898   0.25  Bank Address: 11 N@aleNlabrHW Tanpa, Flolida 33009
+  405    385   1.00  Bank Phone:
+  405   1423   1.00  Contract Email:
+  477   2182   1.00  Yes
+  479    813   0.94  working line of credit, if "Yes"
+  479   2350   0.65  No
+  480    395   0.64  Do you have a
+  483   1301   0.94  please attach a copy
+  549    557   0.49  Total Line of Credit: $51000000
+  550   1204   1.00  Amount Available:
+  551   1549   0.67  Sftullyauallable_
+  551   1872   1.00  Expires: $
+  693   1328   0.95  PROJECT EXPERIENCE
+  761    698   0.87  Please list the 5 Largest Completed Contracts:
+  818    436   0.53  Project and Location
+  818   1684   1.00  Year
+  818   1957   0.82  Final Contract
+  843   2267   0.94  Gross Profit
+  868   1956   1.00  Price
+  869    846   0.86  For Whom You Worked, Contact Person and Phone Number
+  869   1684   1.00  Complete
+  933   2222   0.32  sSNA
+  935   1684   1.00  2025
+  935   1903   0.21  sltOVM
+  938    352   0.59  1.FDOT
+ 1014    494   1.00  Pinellas County
+ 1087    354   0.69  2. FDOT
+ 1087   1636   0.27  12022
+ 1088   1911   0.23  SZZ58
+ 1162    503   0.73  Hillsboro County
+ 1237   1636   0.45  12024
+ 1238    351   0.99  3.FDOT
+ 1238   1911   0.62  S258
+ 1314    491   0.89  PPinellas County
+ 1394    276   0.46  4_
+ 1542   1830   0.79  S
+ 1543   2148   0.78  S
+ 1545    276   1.00  5_
+ 1686   1328   1.00  REFERENCES
+ 1753    965   0.66  Major Subcontractors (or General Contractors, if you are a subcontractor)
+ 1810   1493   0.62  Phone Number
+ 1810   1961   0.97  Contact Person
+ 1814    438   0.89  Name of Company
+ 1869   1919   0.50  Ken Fieeze
+ 1927   1913   0.27  Jin Tekss
+ 1985   1965   0.25  Wgeey RRbbeas
+ 2044   1927   0.41  Hark Wotttz
+ 2158    459   0.85  Owners & Architects
+ 2218   1493   0.59  Phone Number
+ 2218   1961   1.00  Contact Person
+ 2221    438   0.78  Name of Company
+ 2273   1471   0.78  813-875-0937
+ 2275   1945   0.51  Gtatev Efefel
+ 2567    351   1.00  Suppliers
+ 2622   1493   0.69  Phone Number
+ 2622   1961   0.80  Contact Person
+ 2627    438   0.96  Name of Company
+ 2682   1950   0.25  Jip Wagokhann
+ 2683   1474   0.71  813-800-9Q00
+ 2685    452   0.21  ABC SwpslyHolsese
+ 3052   1338   0.98  3
+ 3058   1235   0.99  Page
+
+======================================================================
+CHECKBOXES  (sorted top-to-bottom, left-to-right)
+======================================================================
+   cy     cx   checked     style
+----------------------------------------------------------------------
+  477   2182      True    filled
+  479   2350     False     empty
