@@ -6,16 +6,13 @@
     "primary_contact": "Butch Taylor, Jr.",
     "email": "btyalorjr@builtright.com",
     "type_of_business": [
-      "LLC",
-      "LLP"
+      "LLC"
     ],
     "date_business_started": "09/01/75",
     "fed_tax_id": "00-00000",
     "primary_naics_code": "236220",
     "number_of_employees": "100",
-    "special_designations": [
-      "8A"
-    ]
+    "special_designations": []
   },
   "owners": [
     {
@@ -27,7 +24,7 @@
       "dob": "5/10/1950",
       "ssn": "786-52-0912",
       "spouse": {
-        "name": "Elizabeth Taylor",
+        "name": "",
         "dob": "",
         "ssn": ""
       }
@@ -37,8 +34,8 @@
   "business_information": {
     "type_of_work_performed": "Road Builder",
     "trades_self_performed": "Asphalt, Concrete and Utilities",
-    "trades_subcontracted": "Subcontract 100% outside of minor punch list and carpentry. Have considered",
-    "union_status": null,
+    "trades_subcontracted": "100% outside of minor punch list and carpentry. Have considered adding in-house electrical.",
+    "union_status": "Non-Union",
     "geographic_territory": "Central Florida",
     "work_acquired_bid_pct": "95",
     "work_acquired_negotiated_pct": "5",
@@ -51,7 +48,7 @@
     "number_of_contracts": "100",
     "desired_bond_single": "20MM",
     "desired_bond_aggregate": "75MM",
-    "currently_bonded": null,
+    "currently_bonded": "Yes",
     "surety_name": "Markel Surety",
     "failed_to_complete_contract": "No",
     "petitioned_for_bankruptcy": "No",
@@ -70,15 +67,12 @@
     "fiscal_year_end": "12/31",
     "years_prepared_statements": "3",
     "tax_basis": [
-      "Cash",
       "% of Completion"
     ],
     "financial_statement_basis": [
-      "Cash",
       "Completed Job"
     ],
     "financial_statement_level": [
-      "CPA Audit",
       "CPA Review"
     ],
     "fulltime_accountant_on_staff": "Yes",

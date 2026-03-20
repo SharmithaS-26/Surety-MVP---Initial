@@ -1,7 +1,4 @@
-"""
-page2_parser.py (merged-token aware rewrite)
-Handles EasyOCR merging label+value into single tokens.
-"""
+
 import re
 from .utils import (
     cluster_rows, find_row, after_kw, between_kw,
@@ -10,13 +7,10 @@ from .utils import (
     resolve_yn_from_checkboxes, checked_labels, yn_from_row,
     clean_text, page_width, page_height, row_cy, row_text,
 )
-
 ROW_CLUSTER_GAP = 14
-
 
 def _cluster(tokens):
     return cluster_rows(tokens, ROW_CLUSTER_GAP)
-
 
 def _extract(tokens, *keywords, stop_keywords=None):
     """Find value by searching for keyword in any token, handling merged label:value tokens."""
@@ -34,14 +28,12 @@ def _extract(tokens, *keywords, stop_keywords=None):
             if stop_kws:
                 for sk in stop_kws:
                     si = after.lower().find(sk)
-                    if si >= 0:
+                    if si > 0:
                         after = after[:si]
-                        break
             result = clean_text(after)
             if result:
                 return result
     return ""
-
 
 def _extract_between(tokens, start_kw, end_kw):
     all_rows = _cluster(tokens)
@@ -61,7 +53,6 @@ def _extract_between(tokens, start_kw, end_kw):
             return result
     return ""
 
-
 def _yn(tokens, boxes, *keywords, dy=35):
     all_rows = _cluster(tokens)
     for kw in keywords:
@@ -71,7 +62,6 @@ def _yn(tokens, boxes, *keywords, dy=35):
             if val:
                 return val
     return None
-
 
 def _parse_subsidiaries(tokens, boxes, ph, pw):
     all_rows = _cluster(tokens)
@@ -84,11 +74,9 @@ def _parse_subsidiaries(tokens, boxes, ph, pw):
             fin_y1 = row_cy(row)
     sub_y1 = sub_y1 or int(ph * 0.53)
     fin_y1 = fin_y1 or int(ph * 0.74)
-
     table_toks  = tokens_in_region(tokens, 0, sub_y1, pw, fin_y1)
     table_rows  = _cluster(table_toks)
     table_boxes = checkboxes_in_region(boxes, int(pw * 0.75), sub_y1, pw, fin_y1)
-
     table_boxes_s = sorted(table_boxes, key=lambda b: (b["cy"], b["cx"]))
     yn_pairs, i = [], 0
     while i < len(table_boxes_s):
@@ -101,7 +89,6 @@ def _parse_subsidiaries(tokens, boxes, ph, pw):
                 continue
         yn_pairs.append((b, None))
         i += 1
-
     skip_kws = ["firm name", "ownership", "type of business", "willing",
                 "indemnify", "subsidiaries", "affiliates", "is the firm",
                 "holding", "detail below", "financial information"]
@@ -131,40 +118,28 @@ def _parse_subsidiaries(tokens, boxes, ph, pw):
             })
     return entries
 
-
 def parse_page2(tokens, boxes):
     print("  [page2_parser] Parsing Page 2…")
     pw = page_width(tokens)
     ph = page_height(tokens)
     all_rows = _cluster(tokens)
-
     # ── Business Information ───────────────────────────────────────────────────
     type_of_work = _extract(tokens, "Type of Work Performed", "Work Performed")
     trades_self  = _extract(tokens, "Trades Self Performed")
     trades_sub = _extract(tokens, "Trades Subcontracted")
     # If the string contains its own beginning repeated, deduplicate
     # e.g. "X...Z. X...W" where X is repeated prefix → keep only first sentence
-    # Remove duplicate text: PyMuPDF reads two text layers producing
-    # two slightly different versions of the same long text.
-    # Fix: find the longest token for this field across all rows,
-    # use only that one (the more complete version wins).
-    if trades_sub and len(trades_sub) > 50:
-        # Find ALL tokens that contain "subcontract" to get all versions
-        all_versions = []
-        for tok in tokens:
-            if "subcontract" in tok["text"].lower() and len(tok["text"]) > 30:
-                all_versions.append(tok["text"].strip())
-        if all_versions:
-            # Use the longest version (most complete)
-            trades_sub = max(all_versions, key=len)
-
+    if trades_sub and len(trades_sub) > 30:
+        first20 = trades_sub[:20]
+        second_start = trades_sub.find(first20, 10)
+        if second_start > 0:
+            trades_sub = trades_sub[:second_start].strip()
     # Union / Non-Union
     union_row    = find_row(all_rows, "Non-Union") or find_row(all_rows, "Union")
     union_labels = checked_labels(union_row, boxes, max_dx=180)
     union_status = union_labels[0] if union_labels else None
     geo_territory = _extract_between(tokens, "Geographic Territory", "") or \
                     _extract(tokens, "Geographic Territory")
-
     # Bid/Negotiated
     bid_pct = _extract_between(tokens, "Bid:", "%")
     neg_pct = _extract_between(tokens, "Negotiated:", "%")
@@ -172,30 +147,24 @@ def parse_page2(tokens, boxes):
         bid_pct = _extract(tokens, "Bid:")
     if not neg_pct:
         neg_pct = _extract(tokens, "Negotiated:")
-
     # Public/Private
     pub_pct  = _extract_between(tokens, "Public:", "%")
     priv_pct = _extract_between(tokens, "Private:", "%")
-
     # Sub bonds
     sub_bonds_yn = _yn(tokens, boxes, "subcontractors", "bonds")
     sub_bond_threshold = _extract(tokens, "for work over")
-
     # Backlog
     backlog_cost      = _extract_between(tokens, "Backlog:", "Year")
     backlog_year      = _extract_between(tokens, "Year:", "Number")
     backlog_contracts = _extract(tokens, "Number of Contracts", "Contracts:")
-
     # Bond program
     single_amt = _extract_between(tokens, "Single $", "Aggregate") or \
                  _extract_between(tokens, "Single", "Aggregate")
     agg_amt    = _extract(tokens, "Aggregate $") or _extract(tokens, "Aggregate")
-
     # Currently bonded
     bonded_row       = find_row(all_rows, "Currently Bonded")
     currently_bonded = yn_from_row(bonded_row, boxes, dy=25)
     surety_name      = _extract(tokens, "Name of Surety", "Surety:")
-
     # Yes/No questionnaire rows — search by unique keywords
     failed_contract  = _yn(tokens, boxes, "failed to complete", "bonding company", dy=40)
     bankruptcy       = _yn(tokens, boxes, "bankruptcy")
@@ -205,9 +174,7 @@ def parse_page2(tokens, boxes):
     trust_indemnify  = "N/A" if assets_trust == "No" else \
                        _yn(tokens, boxes, "trust indemnify", "indemnify the surety")
     sub_qn_yn        = _yn(tokens, boxes, "stockholders connected", "subsidiary")
-
     subsidiaries = _parse_subsidiaries(tokens, boxes, ph, pw)
-
     business_information = {
         "type_of_work_performed":        clean_text(type_of_work),
         "trades_self_performed":         clean_text(trades_self),
@@ -236,7 +203,6 @@ def parse_page2(tokens, boxes):
         "connected_to_other_company":    sub_qn_yn,
         "subsidiaries_affiliates":       subsidiaries,
     }
-
     # ── Financial Information ──────────────────────────────────────────────────
     cpa_name    = _extract(tokens, "Name of CPA firm", "CPA firm")
     cpa_address = _extract(tokens, "CPA Address")
@@ -260,27 +226,22 @@ def parse_page2(tokens, boxes):
             email = candidate if "@" in candidate else raw_email
         else:
             email = raw_email
-
     fiscal_year_end = _extract_between(tokens, "Fiscal Year End", "How") or \
                       _extract(tokens, "Fiscal Year End")
     years_prepared  = _extract(tokens, "financial statement?") or \
                       _extract(tokens, "prepared your financial statement")
-
     tax_row       = find_row(all_rows, "taxes prepared")
     fin_stmt_row  = find_row(all_rows, "financial statements prepared")
     fin_level_row = find_row(all_rows, "level", "financial statements")
     fulltime_row  = find_row(all_rows, "full-time accountant") or \
                     find_row(all_rows, "full time accountant")
-
     tax_basis_labels  = checked_labels(tax_row,       boxes, max_dx=200)
     fin_stmt_labels   = checked_labels(fin_stmt_row,  boxes, max_dx=200)
     fin_level_labels  = checked_labels(fin_level_row, boxes, max_dx=200)
     fulltime_acct     = yn_from_row(fulltime_row, boxes, dy=25)
-
     acct_sw  = _extract(tokens, "Accounting Software")
     est_sw   = _extract(tokens, "Estimating Software")
     jcost_sw = _extract(tokens, "Job Cost Software")
-
     financial_information = {
         "cpa_firm":                     clean_text(cpa_name),
         "cpa_address":                  clean_text(cpa_address),
@@ -296,7 +257,6 @@ def parse_page2(tokens, boxes):
         "estimating_software":          clean_text(est_sw),
         "job_cost_software":            clean_text(jcost_sw),
     }
-
     print("  [page2_parser] Done.")
     return {
         "business_information":  business_information,

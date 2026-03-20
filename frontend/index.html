@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CQ Review Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #0f1e38; --navy2: #162847; --navy3: #1e3560;
+    --gold: #d4a843; --gold2: #e8c06a;
+    --cream: #f7f4ee; --cream2: #ede9e0;
+    --slate: #8395b0; --red: #c94040; --green: #2e8b57; --amber: #c97820;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(15,30,56,0.10);
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; display: flex; }
+
+  /* ── SIDEBAR ── */
+  #sidebar { width: 252px; min-width: 252px; background: var(--navy); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.18); }
+  .sidebar-brand { padding: 28px 24px 20px; border-bottom: 1px solid rgba(212,168,67,0.2); }
+  .sidebar-brand .brand-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+  .sidebar-brand .brand-name { font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 700; color: var(--white); line-height: 1.2; font-style: italic; }
+  .sidebar-entity { padding: 14px 24px; background: rgba(212,168,67,0.08); border-bottom: 1px solid rgba(212,168,67,0.12); }
+  .entity-name { font-size: 13px; font-weight: 500; color: var(--gold2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entity-sub { font-size: 11px; color: var(--slate); margin-top: 2px; }
+  nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+  .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slate); padding: 10px 24px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 13.5px; border-left: 3px solid transparent; transition: all 0.15s; }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--white); border-left-color: var(--gold); background: rgba(212,168,67,0.08); font-weight: 500; }
+  .nav-item .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; border-radius: 20px; padding: 2px 7px; min-width: 18px; text-align: center; }
+  .nav-badge.ok { background: var(--green); }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.07); font-size: 11px; color: var(--slate); }
+
+  /* ── MAIN ── */
+  #main { margin-left: 252px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+  #topbar { background: var(--white); border-bottom: 1px solid var(--cream2); padding: 14px 36px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .topbar-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); flex: 1; }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1.5px solid; }
+  .status-pill.review { color: var(--amber); border-color: var(--amber); background: rgba(201,120,32,0.07); }
+  .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: var(--gold2); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--cream2); color: var(--navy); }
+  .btn-outline:hover { border-color: var(--navy); }
+  .btn-danger { background: #fef2f2; color: var(--red); border: 1.5px solid #fecaca; }
+
+  /* ── CONTENT ── */
+  #content { padding: 36px; max-width: 1100px; }
+  .section-page { display: none; animation: fadeIn 0.2s ease; }
+  .section-page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 700; color: var(--navy); letter-spacing: -0.01em; }
+  .page-header p { font-size: 14px; color: var(--slate); margin-top: 4px; }
+
+  /* ── CARDS ── */
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden; border: 1px solid var(--cream2); }
+  .card-header { padding: 16px 24px; border-bottom: 1px solid var(--cream2); display: flex; align-items: center; gap: 12px; }
+  .card-header h2 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); flex: 1; }
+  .card-icon { width: 34px; height: 34px; border-radius: 8px; background: rgba(15,30,56,0.06); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .card-body { padding: 22px 24px; }
+
+  /* ── FIELDS ── */
+  .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px 24px; }
+  .field-grid.two { grid-template-columns: repeat(2, 1fr); }
+  .field-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); }
+  .field-value { font-size: 14px; color: var(--navy); padding: 8px 0; border-bottom: 1.5px solid var(--cream2); min-height: 34px; display: flex; align-items: center; }
+  .field-value.missing { color: var(--red); font-style: italic; opacity: 0.7; }
+  .field-value.missing::before { content: '⚠ '; font-style: normal; }
+  .field input { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 8px 10px; border: 1.5px solid var(--cream2); border-radius: 7px; color: var(--navy); background: var(--cream); outline: none; transition: border-color 0.15s; width: 100%; }
+  .field input:focus { border-color: var(--gold); background: var(--white); }
+
+  /* ── CHIPS ── */
+  .chip { display: inline-block; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin: 2px 4px 2px 0; }
+  .chip.navy { background: var(--navy); color: #fff; }
+  .chip.gold { background: var(--gold); color: var(--navy); font-weight: 700; }
+  .chip.green { background: rgba(46,139,87,0.12); color: var(--green); border: 1px solid rgba(46,139,87,0.3); }
+  .chip.red { background: rgba(201,64,64,0.1); color: var(--red); border: 1px solid rgba(201,64,64,0.25); }
+  .chip.slate { background: var(--cream2); color: var(--slate); }
+  .yn-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+  .yn-yes { background: rgba(46,139,87,0.12); color: var(--green); }
+  .yn-no  { background: rgba(201,64,64,0.10); color: var(--red); }
+  .yn-na  { background: var(--cream2); color: var(--slate); }
+
+  /* ── BANNERS ── */
+  .validation-banner { display: flex; align-items: flex-start; gap: 12px; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; border: 1.5px solid; font-size: 13.5px; font-family: 'Fraunces', Georgia, serif; font-weight: 500; }
+  .validation-banner.warn  { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+  .validation-banner.good  { border-color: #a7f3d0; background: #f0fdf4; color: var(--green); }
+  .validation-banner .icon { font-size: 18px; margin-top: 1px; }
+  .validation-banner .vb-text strong { display: block; font-weight: 600; margin-bottom: 2px; }
+
+  /* ── SUMMARY STATS ── */
+  .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .summary-stat { background: var(--white); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border: 1px solid var(--cream2); }
+  .summary-stat .ss-label { font-family: 'Fraunces', Georgia, serif; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--slate); margin-bottom: 8px; }
+  .summary-stat .ss-value { font-family: 'Fraunces', Georgia, serif; font-size: 24px; font-weight: 700; color: var(--navy); letter-spacing: -0.01em; }
+  .summary-stat .ss-sub { font-family: 'Fraunces', Georgia, serif; font-size: 12.5px; font-style: italic; color: var(--slate); margin-top: 4px; }
+
+  /* ── OWNER CARD ── */
+  .owner-card { border: 1.5px solid var(--cream2); border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+  .owner-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .owner-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: var(--gold); }
+  .owner-name { font-size: 15px; font-weight: 600; color: var(--navy); }
+  .owner-title { font-size: 12px; color: var(--slate); }
+  .ownership-pct { margin-left: auto; font-family: 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 700; color: var(--navy); }
+  .ownership-pct span { font-size: 14px; color: var(--slate); }
+  .pct-bar-container { margin: 12px 0 4px; }
+  .pct-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--slate); margin-bottom: 5px; }
+  .pct-bar-track { height: 7px; border-radius: 10px; background: var(--cream2); overflow: hidden; }
+  .pct-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--navy), var(--gold)); }
+  .pct-validation { font-size: 12px; font-weight: 600; margin-top: 6px; }
+  .pct-validation.ok { color: var(--green); }
+  .pct-validation.err { color: var(--red); }
+  .spouse-block { background: var(--cream); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+  .spouse-block .spouse-label { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--slate); margin-bottom: 8px; }
+
+  /* ── TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .data-table th { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--slate); padding: 10px 14px; text-align: left; background: var(--cream); border-bottom: 1.5px solid var(--cream2); }
+  .data-table td { padding: 11px 14px; border-bottom: 1px solid var(--cream2); color: var(--navy); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(212,168,67,0.04); }
+  .data-table td.empty { color: var(--slate); font-style: italic; }
+
+  /* ── CHECKLIST ── */
+  .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--cream2); font-size: 13.5px; cursor: pointer; }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--cream2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; background: var(--cream); color: var(--green); font-size: 12px; font-weight: 700; }
+  .checklist-box.checked { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ── SECTION COMPLETENESS ROWS ── */
+  .sc-row { display: flex; align-items: flex-start; border-bottom: 1px solid var(--cream2); transition: background 0.12s; }
+  .sc-row:hover { background: rgba(212,168,67,0.03); }
+  .sc-meta { width: 160px; min-width: 160px; padding: 16px 16px 16px 22px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid var(--cream2); background: var(--cream); }
+  .sc-name { font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--navy); }
+  .sc-content { flex: 1; padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 6px 20px; align-content: flex-start; }
+  .sc-kv { font-size: 13px; color: var(--navy); white-space: nowrap; }
+  .sc-kv b { font-weight: 600; color: var(--slate); margin-right: 5px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .sc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 16px; width: 100%; }
+  .sc-grid .sc-kv { white-space: normal; }
+  .sc-proj-table { width: 100%; font-size: 13px; }
+  .sc-proj-head, .sc-proj-row { display: grid; grid-template-columns: 28px 1fr 60px 110px 110px 1fr; gap: 0 12px; padding: 7px 10px; border-radius: 6px; }
+  .sc-proj-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); background: var(--cream); margin-bottom: 2px; }
+  .sc-proj-row { border-bottom: 1px solid var(--cream2); }
+  .sc-proj-row:last-child { border-bottom: none; }
+  .sc-proj-row:hover { background: rgba(212,168,67,0.05); }
+  .sc-ref-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--slate); margin-bottom: 6px; }
+  .sc-ref-grid { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .sc-ref-item { font-size: 13px; background: var(--cream); border: 1px solid var(--cream2); border-radius: 6px; padding: 5px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 160px; }
+  .sc-ref-item b { font-size: 13px; color: var(--navy); }
+  .sc-ref-item span { font-size: 11.5px; color: var(--slate); }
+
+  /* ── EDIT MODE BAR ── */
+  .edit-mode-bar { display: none; background: rgba(212,168,67,0.12); border: 1.5px solid var(--gold); border-radius: 10px; padding: 12px 18px; margin-bottom: 18px; align-items: center; gap: 12px; font-size: 13.5px; color: #7a5700; font-weight: 500; }
+  .edit-mode-bar.visible { display: flex; }
+  .edit-mode-bar span { flex: 1; }
+  .section-divider { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); margin: 22px 0 10px; display: flex; align-items: center; gap: 10px; }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--cream2); }
+
+  /* ── AUDIT PANEL ── */
+  #audit-panel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: var(--white); border-left: 2px solid var(--cream2); z-index: 200; flex-direction: column; box-shadow: -4px 0 30px rgba(0,0,0,0.10); overflow: hidden; }
+  #audit-panel.open { display: flex; }
+  .audit-header { padding: 20px 24px; border-bottom: 1px solid var(--cream2); display: flex; align-items: center; gap: 10px; }
+  .audit-header h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; flex: 1; }
+  .audit-close { cursor: pointer; font-size: 20px; color: var(--slate); background: none; border: none; }
+  .audit-body { flex: 1; overflow-y: auto; padding: 16px 24px; }
+  .audit-entry { border-left: 3px solid var(--gold); padding: 10px 14px; margin-bottom: 12px; background: var(--cream); border-radius: 0 8px 8px 0; font-size: 13px; }
+  .audit-meta { font-size: 11px; color: var(--slate); margin-bottom: 4px; display: flex; gap: 8px; }
+  .audit-field { font-weight: 600; color: var(--navy); }
+  .audit-change { color: var(--slate); margin-top: 2px; }
+  .audit-old { text-decoration: line-through; color: var(--red); }
+  .audit-new { color: var(--green); font-weight: 500; }
+  .audit-empty { color: var(--slate); font-size: 13px; text-align: center; padding: 30px 0; }
+
+  /* ── LOADING ── */
+  #loading { position: fixed; inset: 0; background: var(--cream); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 14px; }
+  #loading .load-title { font-family: 'Fraunces', Georgia, serif; font-size: 22px; font-weight: 600; color: var(--navy); }
+  #loading .load-sub { font-size: 13px; color: var(--slate); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--cream2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #error-banner { display: none; background: #fef2f2; border: 1.5px solid #fecaca; color: var(--red); padding: 20px 28px; border-radius: 10px; margin: 30px; font-size: 14px; }
+  #error-banner strong { display: block; font-size: 16px; margin-bottom: 6px; }
+  #error-banner code { font-size: 12px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; }
+
+  @media (max-width: 900px) { #sidebar { display: none; } #main { margin-left: 0; } .summary-row { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="load-title">Loading CQ Data…</div>
+  <div class="load-sub">Fetching result.json</div>
+</div>
+<div id="error-banner"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" style="display:none;">
+  <div class="sidebar-brand">
+    <div class="brand-label">Underwriting Portal</div>
+    <div class="brand-name">CQ Review<br>System</div>
+  </div>
+  <div class="sidebar-entity">
+    <div class="entity-name" id="sb-company">—</div>
+    <div class="entity-sub" id="sb-sub">—</div>
+  </div>
+  <nav>
+    <div class="nav-section-label">Questionnaire</div>
+    <div class="nav-item active" data-page="overview" onclick="navigate(this)"><span class="nav-icon">📋</span> Overview</div>
+    <div class="nav-item" data-page="contractor" onclick="navigate(this)"><span class="nav-icon">🏢</span> Contractor Profile</div>
+    <div class="nav-item" data-page="ownership" onclick="navigate(this)"><span class="nav-icon">👤</span> Ownership Structure<span class="nav-badge ok" id="own-badge">✓</span></div>
+    <div class="nav-item" data-page="affiliates" onclick="navigate(this)"><span class="nav-icon">🔗</span> Affiliates</div>
+    <div class="nav-item" data-page="banking" onclick="navigate(this)"><span class="nav-icon">🏦</span> Bank Information</div>
+    <div class="nav-item" data-page="indemnity" onclick="navigate(this)"><span class="nav-icon">🛡</span> Indemnity</div>
+    <div class="nav-item" data-page="bonding" onclick="navigate(this)"><span class="nav-icon">📎</span> Bonding Info</div>
+    <div class="nav-section-label" style="margin-top:12px;">Additional</div>
+    <div class="nav-item" data-page="financial" onclick="navigate(this)"><span class="nav-icon">📊</span> Financial Info</div>
+    <div class="nav-item" data-page="projects" onclick="navigate(this)"><span class="nav-icon">🏗</span> Projects</div>
+    <div class="nav-item" data-page="references" onclick="navigate(this)"><span class="nav-icon">📞</span> References</div>
+    <div class="nav-item" data-page="checklist" onclick="navigate(this)"><span class="nav-icon">✅</span> Bond Checklist</div>
+    <div class="nav-section-label" style="margin-top:12px;">Tools</div>
+    <div class="nav-item" onclick="toggleAudit()"><span class="nav-icon">📝</span> Audit Log<span class="nav-badge ok" id="audit-count">0</span></div>
+  </nav>
+  <div class="sidebar-footer" id="sb-footer">Extracted via CQ Pipeline v1.0</div>
+</aside>
+
+<!-- MAIN -->
+<div id="main" style="display:none;">
+<div id="topbar">
+  <div class="topbar-title" id="topbar-title">Overview</div>
+  <span class="status-pill review"><span class="dot"></span>Under Review</span>
+  <button class="btn btn-outline" onclick="toggleEditMode()">✏️ Underwriter Edit</button>
+  <button class="btn btn-gold" onclick="toggleAudit()">📋 Audit Log</button>
+</div>
+
+<div id="content">
+  <div class="edit-mode-bar" id="edit-bar">
+    <span>⚠️ <strong>Edit Mode Active</strong> — All changes are tracked in the Audit Log.</span>
+    <button class="btn btn-gold" onclick="saveEdits()">Save Changes</button>
+    <button class="btn btn-danger" onclick="cancelEdits()">Cancel</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section-page active" id="page-overview">
+    <div class="page-header"><h1>CQ Submission Overview</h1><p>Automated extraction summary for underwriter review.</p></div>
+    <div class="summary-row" id="summary-stats"></div>
+    <div id="ownership-banner"></div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">📋</div><h2>Section Completeness</h2></div>
+      <div class="card-body" style="padding:0;" id="section-completeness"></div>
+    </div>
+  </div>
+
+  <!-- CONTRACTOR PROFILE -->
+  <div class="section-page" id="page-contractor">
+    <div class="page-header"><h1>Contractor Profile</h1><p>Account identity and business details extracted from Page 1 of the CQ.</p></div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🏢</div><h2>General Information</h2><button class="btn btn-outline" style="font-size:12px;" onclick="toggleEditMode()">Edit</button></div>
+      <div class="card-body" id="contractor-general"></div>
+    </div>
+  </div>
+
+  <!-- OWNERSHIP -->
+  <div class="section-page" id="page-ownership">
+    <div class="page-header"><h1>Ownership Structure</h1><p>Officer and stockholder details. Total ownership must equal 100%.</p></div>
+    <div id="ownership-validation-banner"></div>
+    <div class="card" style="padding:20px 24px;margin-bottom:20px;" id="pct-bar-card"></div>
+    <div id="owners-list"></div>
+    <div class="card" id="indemnification-card">
+      <div class="card-header"><div class="card-icon">🛡</div><h2>Personal Indemnification</h2></div>
+      <div class="card-body" id="indemnification-body"></div>
+    </div>
+  </div>
+
+  <!-- AFFILIATES -->
+  <div class="section-page" id="page-affiliates">
+    <div class="page-header"><h1>Affiliates &amp; Related Entities</h1><p>Subsidiaries, parent companies, holding companies, and related firms.</p></div>
+    <div id="affiliates-body"></div>
+  </div>
+
+  <!-- BANKING -->
+  <div class="section-page" id="page-banking">
+    <div class="page-header"><h1>Bank Information</h1><p>Credit references and line of credit details.</p></div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🏦</div><h2>Primary Bank</h2><button class="btn btn-outline" style="font-size:12px;" onclick="toggleEditMode()">Edit</button></div>
+      <div class="card-body" id="banking-body"></div>
+    </div>
+  </div>
+
+  <!-- INDEMNITY -->
+  <div class="section-page" id="page-indemnity">
+    <div class="page-header"><h1>Indemnity</h1><p>Indemnitor information and personal guarantee status.</p></div>
+    <div id="indemnity-body"></div>
+  </div>
+
+  <!-- BONDING -->
+  <div class="section-page" id="page-bonding">
+    <div class="page-header"><h1>Bonding Information</h1><p>Current bonding status and desired program limits.</p></div>
+    <div id="bonding-body"></div>
+  </div>
+
+  <!-- FINANCIAL -->
+  <div class="section-page" id="page-financial">
+    <div class="page-header"><h1>Financial Information</h1><p>CPA details, statement basis, software stack.</p></div>
+    <div id="financial-body"></div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="section-page" id="page-projects">
+    <div class="page-header"><h1>Project Experience</h1><p>Five largest completed contracts.</p></div>
+    <div class="card">
+      <div class="card-header"><div class="card-icon">🏗</div><h2>Completed Contracts</h2></div>
+      <div class="card-body" style="padding:0;" id="projects-body"></div>
+    </div>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="section-page" id="page-references">
+    <div class="page-header"><h1>References</h1><p>Major subcontractors, owners &amp; architects, and suppliers.</p></div>
+    <div id="references-body"></div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="section-page" id="page-checklist">
+    <div class="page-header"><h1>Bond Required Documents</h1><p>Checklist of documents required for bonds over $500,000.</p></div>
+    <div class="validation-banner warn"><span class="icon">📁</span><div class="vb-text"><strong>All Items Pending</strong> — Check items off as documents are received.</div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">✅</div><h2>Document Checklist</h2></div><div class="card-body" id="checklist-items"></div></div>
+  </div>
+</div>
+</div>
+
+<!-- AUDIT PANEL -->
+<div id="audit-panel">
+  <div class="audit-header"><span style="font-size:20px;">📝</span><h3>Audit Log</h3><button class="audit-close" onclick="toggleAudit()">✕</button></div>
+  <div class="audit-body" id="audit-body"><div class="audit-empty">No overrides recorded yet.<br><span style="font-size:12px;">Edits made by the underwriter will appear here.</span></div></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let DATA = null;
+let auditLog = [];
+let editMode = false;
+let editOriginals = {};
+let checklistState = [];
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+const v = (val, fallback = '—') => (val && String(val).trim()) ? val : fallback;
+const yn = val => {
+  if (!val) return `<span class="yn-badge yn-na">Not Resolved</span>`;
+  if (val.toLowerCase() === 'yes') return `<span class="yn-badge yn-yes">✓ Yes</span>`;
+  if (val.toLowerCase() === 'no')  return `<span class="yn-badge yn-no">✗ No</span>`;
+  return `<span class="yn-badge yn-na">${val}</span>`;
+};
+const chip = (label, cls='navy') => label ? `<span class="chip ${cls}">${label}</span>` : '';
+const chips = (arr, cls='navy') => (arr||[]).length ? arr.map(x => chip(x, cls)).join('') : chip('None','slate');
+const missing = val => !val || !String(val).trim();
+const fv = (val) => missing(val)
+  ? `<div class="field-value missing">Not captured</div>`
+  : `<div class="field-value">${val}</div>`;
+const fve = (val, key) => missing(val)
+  ? `<div class="field-value missing editable" data-field="${key}" data-orig="">Not captured</div>`
+  : `<div class="field-value editable" data-field="${key}" data-orig="${val}">${val}</div>`;
+const field = (label, val) => `<div class="field"><label>${label}</label>${fv(val)}</div>`;
+const fieldE = (label, val, key) => `<div class="field"><label>${label}</label>${fve(val, key)}</div>`;
+const initials = name => name ? name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase() : '?';
+const sc = (name, status, content) => `
+  <div class="sc-row">
+    <div class="sc-meta"><span class="sc-name">${name}</span><span class="chip ${status === 'Complete' ? 'green' : status === 'Pending' ? 'slate' : 'gold'}">${status}</span></div>
+    <div class="sc-content">${content}</div>
+  </div>`;
+const scKv = (k,v) => `<span class="sc-kv"><b>${k}</b>${v||'—'}</span>`;
+
+// ═══════════════════════════════════════════════════════════
+//  FETCH
+// ═══════════════════════════════════════════════════════════
+async function loadData() {
+  try {
+    const res = await fetch('../output/result.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    DATA = await res.json();
+    init();
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    const eb = document.getElementById('error-banner');
+    eb.style.display = 'block';
+    eb.innerHTML = `<strong>Could not load result.json</strong>
+      Make sure you're serving this file from your project root:<br><br>
+      <code>python -m http.server 8000</code><br><br>
+      Then open: <code>http://localhost:8000/frontend/index.html</code><br><br>
+      Error: ${e.message}`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INIT — wire up all sections
+// ═══════════════════════════════════════════════════════════
+function init() {
+  const d = DATA;
+  const gi = d.general_information;
+  const bi = d.business_information;
+  const fi = d.financial_information;
+  const bk = d.banking;
+
+  // Sidebar
+  document.getElementById('sb-company').textContent = v(gi.company_name);
+  document.getElementById('sb-sub').textContent = `NAICS ${v(gi.primary_naics_code)} · Fed ID ${v(gi.fed_tax_id)}`;
+
+  // Summary stats
+  const totalPct = d.owners.reduce((s,o) => s + (parseFloat(o.ownership_pct)||0), 0);
+  document.getElementById('summary-stats').innerHTML = `
+    <div class="summary-stat">
+      <div class="ss-label">Company</div>
+      <div class="ss-value" style="font-size:16px;margin-top:4px;">${v(gi.company_name)}</div>
+      <div class="ss-sub">${chips(gi.type_of_business,'navy').replace(/<[^>]+>/g,t=>t)} · Since ${v(gi.date_business_started)}</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-label">Single Bond Limit</div>
+      <div class="ss-value">$${v(bi.desired_bond_single)}</div>
+      <div class="ss-sub">Aggregate: $${v(bi.desired_bond_aggregate)}</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-label">Ownership Total</div>
+      <div class="ss-value" style="color:${totalPct===100?'var(--green)':'var(--red)'}">${totalPct}%</div>
+      <div class="ss-sub">${d.owners.length} owner${d.owners.length!==1?'s':''} · ${totalPct===100?'Validated ✓':'⚠ Does not total 100%'}</div>
+    </div>
+    <div class="summary-stat">
+      <div class="ss-label">Data Issues</div>
+      <div class="ss-value" style="color:var(--green)">0</div>
+      <div class="ss-sub">No flagged fields</div>
+    </div>`;
+
+  // Ownership banner
+  document.getElementById('ownership-banner').innerHTML = totalPct === 100
+    ? `<div class="validation-banner good"><span class="icon">✅</span><div class="vb-text"><strong>Ownership Validation Passed</strong> Ownership totals exactly 100% across all owners.</div></div>`
+    : `<div class="validation-banner warn"><span class="icon">⚠️</span><div class="vb-text"><strong>Ownership total is ${totalPct}%</strong> — must equal exactly 100%.</div></div>`;
+
+  // Section completeness
+  const projRows = d.projects.filter(p=>p.project_name).map(p=>`
+    <div class="sc-proj-row"><span>${p.project_number}</span><span>${p.project_name}</span><span>${p.year_complete}</span><span>$${p.final_contract_price}</span><span>$${p.gross_profit}</span><span>${p.for_whom_contact}</span></div>`).join('');
+  const subRefs = (d.references.major_subcontractors||[]).map(r=>`<div class="sc-ref-item"><b>${r.company}</b><span>${r.contact}</span></div>`).join('');
+  const oaRefs  = (d.references.owners_and_architects||[]).map(r=>`<div class="sc-ref-item"><b>${r.company}</b><span>${r.contact}${r.phone?' · '+r.phone:''}</span></div>`).join('');
+  const supRefs = (d.references.suppliers||[]).map(r=>`<div class="sc-ref-item"><b>${r.company}</b><span>${r.contact}${r.phone?' · '+r.phone:''}</span></div>`).join('');
+
+  document.getElementById('section-completeness').innerHTML = `
+    ${sc('Contractor Profile','Complete',`
+      ${scKv('Company', gi.company_name)}${scKv('Address', gi.address)}${scKv('Phone', gi.phone)}${scKv('Contact', gi.primary_contact)}`)}
+    ${sc('Ownership','Complete',`
+      ${scKv('Owner', d.owners[0]?.name)}${scKv('Title', d.owners[0]?.title)}${scKv('Ownership', d.owners[0]?.ownership_pct+'%')}${scKv('Indemnification', d.personal_indemnification)}`)}
+    ${sc('Affiliates','Complete',`
+      ${scKv('Connected to other company', bi.connected_to_other_company)}${scKv('Subsidiaries / Affiliates', bi.subsidiaries_affiliates?.length ? bi.subsidiaries_affiliates.length+' found' : 'None declared')}`)}
+    ${sc('Financial Info','Complete',`<div class="sc-grid">
+      ${scKv('CPA Firm', fi.cpa_firm)}${scKv('Contact', fi.cpa_contact)}${scKv('Email', fi.cpa_email)}
+      ${scKv('CPA Address', fi.cpa_address)}${scKv('Fiscal Year End', fi.fiscal_year_end)}${scKv('Years Preparing', fi.years_prepared_statements)}
+      ${scKv('Full-time Accountant', fi.fulltime_accountant_on_staff)}${scKv('Tax Basis', (fi.tax_basis||[]).join(', '))}${scKv('Statement Basis', (fi.financial_statement_basis||[]).join(', '))}
+      ${scKv('Statement Level', (fi.financial_statement_level||[]).join(', '))}${scKv('Accounting', fi.accounting_software)}${scKv('Estimating', fi.estimating_software)}
+      ${scKv('Job Cost', fi.job_cost_software)}</div>`)}
+    ${sc('Banking','Complete',`<div class="sc-grid">
+      ${scKv('Bank', bk.bank_name)}${scKv('Contact', bk.contact_name)}${scKv('Address', bk.bank_address)}
+      ${scKv('Line of Credit', bk.line_of_credit)}${scKv('Total LOC', '$'+bk.total_line_of_credit)}${scKv('Available', bk.amount_available)}
+      ${scKv('Secured By', bk.how_secured)}</div>`)}
+    ${sc('Projects','Complete',`<div class="sc-proj-table">
+      <div class="sc-proj-head"><span>#</span><span>Project</span><span>Year</span><span>Contract Price</span><span>Gross Profit</span><span>Client</span></div>
+      ${projRows}</div>`)}
+    ${sc('References','Complete',`<div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+      <div><div class="sc-ref-label">Major Subcontractors</div><div class="sc-ref-grid">${subRefs}</div></div>
+      <div><div class="sc-ref-label">Owners &amp; Architects</div><div class="sc-ref-grid">${oaRefs}</div></div>
+      <div><div class="sc-ref-label">Suppliers</div><div class="sc-ref-grid">${supRefs}</div></div></div>`)}
+    <div class="sc-row" style="border-bottom:none;">
+      <div class="sc-meta"><span class="sc-name">Bond Checklist</span><span class="chip slate">Pending</span></div>
+      <div class="sc-content">${scKv('Items','10 documents required')}${scKv('Received','0 of 10')}${scKv('Threshold','Bonds over $500,000')}</div>
+    </div>`;
+
+  // ── Contractor Profile ──
+  document.getElementById('contractor-general').innerHTML = `
+    <div class="field-grid">
+      ${field('Company Name', gi.company_name)}${field('Address', gi.address)}
+      ${field('Phone', gi.phone)}${field('Primary Contact', gi.primary_contact)}
+      ${field('Email', gi.email)}${field('Fed Tax ID', gi.fed_tax_id)}
+      ${field('Date Business Started', gi.date_business_started)}${field('NAICS Code', gi.primary_naics_code)}
+      ${field('Number of Employees', gi.number_of_employees)}
+    </div>
+    <div class="section-divider">Business Type &amp; Designations</div>
+    <div class="field-grid two">
+      <div class="field"><label>Type of Business</label><div style="padding:6px 0;">${chips(gi.type_of_business)}</div></div>
+      <div class="field"><label>Special Designations</label><div style="padding:6px 0;">${chips(gi.special_designations,'gold') || chip('None','slate')}</div></div>
+    </div>
+    <div class="section-divider">Business Information</div>
+    <div class="field-grid">
+      ${field('Type of Work', bi.type_of_work_performed)}${field('Geographic Territory', bi.geographic_territory)}
+      ${field('Work Acquired — Bid', bi.work_acquired_bid_pct+'%')}${field('Work Acquired — Negotiated', bi.work_acquired_negotiated_pct+'%')}
+      ${field('Public Work', bi.work_public_pct+'%')}${field('Private Work', bi.work_private_pct+'%')}
+    </div>
+    <div class="section-divider">Trades</div>
+    <div class="field-grid" style="grid-template-columns:1fr;">
+      ${field('Trades Self Performed', bi.trades_self_performed)}
+      ${field('Trades Subcontracted', bi.trades_subcontracted)}
+    </div>`;
+
+  // ── Ownership ──
+  document.getElementById('ownership-validation-banner').innerHTML = totalPct === 100
+    ? `<div class="validation-banner good"><span class="icon">✅</span><div class="vb-text"><strong>Ownership Totals 100%</strong> ${d.owners.length} owner declared. Validation passed.</div></div>`
+    : `<div class="validation-banner warn"><span class="icon">⚠️</span><div class="vb-text"><strong>Ownership total is ${totalPct}%</strong> — must equal exactly 100%.</div></div>`;
+
+  document.getElementById('pct-bar-card').innerHTML = `
+    <div class="pct-bar-label">
+      <span>${d.owners.map(o=>`${o.name} — ${o.ownership_pct}%`).join(' | ')}</span>
+      <span>Total: ${totalPct}%</span>
+    </div>
+    <div class="pct-bar-track"><div class="pct-bar-fill" style="width:${Math.min(totalPct,100)}%;"></div></div>
+    <div class="pct-validation ${totalPct===100?'ok':'err'}">${totalPct===100?'✓ Ownership totals exactly 100%':'⚠ Total does not equal 100%'}</div>`;
+
+  document.getElementById('owners-list').innerHTML = d.owners.map(o => `
+    <div class="owner-card">
+      <div class="owner-card-head">
+        <div class="owner-avatar">${initials(o.name)}</div>
+        <div><div class="owner-name">${o.name}</div><div class="owner-title">${v(o.title)}</div></div>
+        <div class="ownership-pct">${o.ownership_pct}<span>%</span></div>
+      </div>
+      <div class="field-grid three">
+        ${field('Address', o.address)}${field('City / State / ZIP', o.city_state_zip)}
+        ${field('Date of Birth', o.dob)}${field('SSN', o.ssn)}
+      </div>
+      ${o.spouse ? `<div class="spouse-block">
+        <div class="spouse-label">Spouse Information</div>
+        <div class="field-grid three">
+          ${field('Spouse Name', o.spouse.name)}
+          <div class="field"><label>Spouse DOB</label>${missing(o.spouse.dob) ? fv('') : fv(o.spouse.dob)}</div>
+          <div class="field"><label>Spouse SSN</label>${missing(o.spouse.ssn) ? fv('') : fv(o.spouse.ssn)}</div>
+        </div></div>` : ''}
+    </div>`).join('');
+
+  document.getElementById('indemnification-body').innerHTML = `
+    <div class="field"><label>Will all owners &amp; spouses provide full personal indemnification?</label>
+    <div style="padding:8px 0;">${yn(d.personal_indemnification)}</div></div>
+    ${d.personal_indemnification === 'No' ? `<div class="validation-banner warn" style="margin-top:14px;margin-bottom:0;"><span class="icon">⚠️</span><div class="vb-text"><strong>Reason Required</strong> — Owner declined personal indemnification. An explanation should be attached.</div></div>` : ''}`;
+
+  // ── Affiliates ──
+  const hasAff = bi.subsidiaries_affiliates && bi.subsidiaries_affiliates.length > 0;
+  document.getElementById('affiliates-body').innerHTML = `
+    <div class="validation-banner ${hasAff ? 'warn' : 'good'}"><span class="icon">${hasAff ? '⚠️' : '✅'}</span>
+    <div class="vb-text"><strong>${hasAff ? bi.subsidiaries_affiliates.length + ' Affiliate(s) Declared' : 'No Affiliates Declared'}</strong>
+    ${hasAff ? 'See table below.' : 'The contractor indicated no connection to any subsidiary, parent, holding, or affiliate entity.'}</div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">🔗</div><h2>Connected Companies</h2></div>
+    <div class="card-body">
+      <div class="field" style="margin-bottom:16px;"><label>Is the firm connected to any other company?</label><div style="padding:8px 0;">${yn(bi.connected_to_other_company)}</div></div>
+      ${hasAff ? `<table class="data-table"><thead><tr><th>Firm Name</th><th>Ownership %</th><th>Type of Business</th><th>Willing to Indemnify</th></tr></thead><tbody>
+        ${bi.subsidiaries_affiliates.map(a=>`<tr><td>${v(a.firm_name)}</td><td>${v(a.ownership_pct)}</td><td>${v(a.type_of_business)}</td><td>${yn(a.willing_to_indemnify)}</td></tr>`).join('')}
+        </tbody></table>` : `<div style="text-align:center;padding:30px 0;color:var(--slate);font-size:14px;"><div style="font-size:36px;margin-bottom:10px;">🔗</div>No subsidiaries or affiliates on file.</div>`}
+    </div></div>
+    <div class="card" style="border:2px dashed var(--cream2);box-shadow:none;background:transparent;">
+      <div class="card-body" style="text-align:center;padding:20px;">
+        <button class="btn btn-outline" onclick="alert('Underwriter can manually add affiliate records here.')">+ Add Affiliate (Override)</button>
+        <div style="font-size:12px;color:var(--slate);margin-top:8px;">Manual addition will be logged in the Audit trail.</div>
+      </div></div>`;
+
+  // ── Banking ──
+  document.getElementById('banking-body').innerHTML = `
+    <div class="field-grid">
+      ${fieldE('Bank Name', bk.bank_name, 'bank_name')}
+      ${fieldE('Contact Name', bk.contact_name, 'contact_name')}
+      ${fieldE('Bank Address', bk.bank_address, 'bank_address')}
+      ${fieldE('Bank Phone', bk.bank_phone, 'bank_phone')}
+      ${fieldE('Bank Email', bk.bank_email, 'bank_email')}
+    </div>
+    <div class="section-divider">Line of Credit</div>
+    <div class="field-grid">
+      <div class="field"><label>Has Line of Credit</label><div class="field-value">${yn(bk.line_of_credit)}</div></div>
+      <div class="field"><label>Total Line of Credit</label><div class="field-value" style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:700;">$${v(bk.total_line_of_credit)}</div></div>
+      ${field('Amount Available', bk.amount_available)}
+      ${field('Expires', bk.expires)}
+      ${field('How Secured', bk.how_secured)}
+    </div>`;
+
+  // ── Indemnity ──
+  document.getElementById('indemnity-body').innerHTML = `
+    <div class="card"><div class="card-header"><div class="card-icon">🛡</div><h2>Indemnification Status</h2></div>
+    <div class="card-body">
+      <div class="field-grid two">
+        <div class="field"><label>Personal Indemnification (All Owners + Spouses)</label><div style="padding:8px 0;">${yn(d.personal_indemnification)}</div></div>
+        <div class="field"><label>Trust Will Indemnify Surety</label><div style="padding:8px 0;">${yn(bi.trust_will_indemnify_surety)}</div></div>
+      </div>
+      ${d.personal_indemnification === 'No' ? `<div class="validation-banner warn" style="margin-top:18px;margin-bottom:0;"><span class="icon">⚠️</span><div class="vb-text"><strong>Indemnification Declined — Underwriter Action Required</strong> Per CQ form, a written explanation must be attached.</div></div>` : ''}
+    </div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">👤</div><h2>Indemnitors</h2></div>
+    <div class="card-body" style="padding:0;">
+      <table class="data-table"><thead><tr><th>Name</th><th>Role</th><th>Ownership %</th><th>Indemnifying?</th></tr></thead><tbody>
+        ${d.owners.map(o=>`<tr><td>${o.name}</td><td>${v(o.title)}</td><td>${v(o.ownership_pct)}%</td><td>${yn(d.personal_indemnification)}</td></tr>`).join('')}
+        ${d.owners.filter(o=>o.spouse?.name).map(o=>`<tr><td>${o.spouse.name}</td><td>Spouse</td><td>—</td><td><span class="yn-badge yn-na">N/A</span></td></tr>`).join('')}
+      </tbody></table>
+    </div></div>`;
+
+  // ── Bonding ──
+  document.getElementById('bonding-body').innerHTML = `
+    <div class="card"><div class="card-header"><div class="card-icon">📎</div><h2>Desired Bond Program</h2></div>
+    <div class="card-body"><div class="field-grid two">
+      <div class="field"><label>Single Bond Limit</label><div class="field-value" style="font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:700;">$${v(bi.desired_bond_single)}</div></div>
+      <div class="field"><label>Aggregate Bond Limit</label><div class="field-value" style="font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:700;">$${v(bi.desired_bond_aggregate)}</div></div>
+    </div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">🏛</div><h2>Current Surety</h2></div>
+    <div class="card-body"><div class="field-grid">
+      <div class="field"><label>Currently Bonded</label><div style="padding:8px 0;">${yn(bi.currently_bonded)}</div></div>
+      ${field('Current Surety Name', bi.surety_name)}
+    </div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">⚖️</div><h2>Questionnaire — Risk Flags</h2></div>
+    <div class="card-body" style="padding:0;"><table class="data-table"><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+      <tr><td>Failed to complete a contract / required financial assistance?</td><td>${yn(bi.failed_to_complete_contract)}</td></tr>
+      <tr><td>Petitioned for bankruptcy in last 10 years?</td><td>${yn(bi.petitioned_for_bankruptcy)}</td></tr>
+      <tr><td>Any business or personal judgments, suits, or claims pending?</td><td>${yn(bi.judgments_suits_claims)}</td></tr>
+      <tr><td>Written Buy-Sell Agreement?</td><td>${yn(bi.buy_sell_agreement)}</td></tr>
+      <tr><td>Assets held in trust or pledged?</td><td>${yn(bi.assets_held_in_trust)}</td></tr>
+      <tr><td>Subcontractor bonds required?</td><td>${yn(bi.subcontractor_bonds_required)}</td></tr>
+      <tr><td>Sub bond threshold</td><td>${v(bi.sub_bond_threshold, '—')}</td></tr>
+      <tr><td>Largest Cost to Complete Backlog</td><td><strong>$${v(bi.largest_cost_to_complete)}</strong> (Year: ${v(bi.backlog_year)}, Contracts: ${v(bi.number_of_contracts)})</td></tr>
+    </tbody></table></div></div>`;
+
+  // ── Financial ──
+  document.getElementById('financial-body').innerHTML = `
+    <div class="card"><div class="card-header"><div class="card-icon">📊</div><h2>CPA Firm</h2></div>
+    <div class="card-body"><div class="field-grid">
+      ${field('CPA Firm', fi.cpa_firm)}${field('CPA Contact', fi.cpa_contact)}
+      ${field('CPA Email', fi.cpa_email)}${field('CPA Address', fi.cpa_address)}
+      ${field('Fiscal Year End', fi.fiscal_year_end)}${field('Years Preparing Statements', fi.years_prepared_statements)}
+      <div class="field"><label>Full-time Accountant on Staff</label><div class="field-value">${yn(fi.fulltime_accountant_on_staff)}</div></div>
+    </div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">📈</div><h2>Statement Basis &amp; Level</h2></div>
+    <div class="card-body"><div class="field-grid three">
+      <div class="field"><label>Tax Basis</label><div style="padding:6px 0;">${chips(fi.tax_basis)}</div></div>
+      <div class="field"><label>Financial Statement Basis</label><div style="padding:6px 0;">${chips(fi.financial_statement_basis)}</div></div>
+      <div class="field"><label>Financial Statement Level</label><div style="padding:6px 0;">${chips(fi.financial_statement_level)}</div></div>
+    </div></div></div>
+    <div class="card"><div class="card-header"><div class="card-icon">💻</div><h2>Software Stack</h2></div>
+    <div class="card-body"><div class="field-grid three">
+      <div class="field"><label>Accounting</label><div class="field-value">${chip(fi.accounting_software,'gold')}</div></div>
+      <div class="field"><label>Estimating</label><div class="field-value">${chip(fi.estimating_software,'gold')}</div></div>
+      <div class="field"><label>Job Cost</label><div class="field-value">${chip(fi.job_cost_software,'gold')}</div></div>
+    </div></div></div>`;
+
+  // ── Projects ──
+  document.getElementById('projects-body').innerHTML = `
+    <table class="data-table"><thead><tr><th>#</th><th>Project Name</th><th>Year</th><th>Final Contract Price</th><th>Gross Profit</th><th>Owner / Contact</th></tr></thead>
+    <tbody>${d.projects.map(p => p.project_name
+      ? `<tr><td>${p.project_number}</td><td>${p.project_name}</td><td>${v(p.year_complete)}</td><td><strong>$${v(p.final_contract_price)}</strong></td><td>$${v(p.gross_profit)}</td><td>${v(p.for_whom_contact)}</td></tr>`
+      : `<tr><td>${p.project_number}</td><td class="empty">Not provided</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td><td class="empty">—</td></tr>`
+    ).join('')}</tbody></table>`;
+
+  // ── References ──
+  const refTable = (icon, title, items) => `
+    <div class="card"><div class="card-header"><div class="card-icon">${icon}</div><h2>${title}</h2></div>
+    <div class="card-body" style="padding:0;"><table class="data-table">
+      <thead><tr><th>Company</th><th>Contact</th><th>Phone</th></tr></thead>
+      <tbody>${items.map(r=>`<tr><td>${v(r.company)}</td><td>${v(r.contact)}</td><td>${v(r.phone)}</td></tr>`).join('')}</tbody>
+    </table></div></div>`;
+  document.getElementById('references-body').innerHTML =
+    refTable('🔧','Major Subcontractors', d.references.major_subcontractors) +
+    refTable('📐','Owners &amp; Architects', d.references.owners_and_architects) +
+    refTable('📦','Suppliers', d.references.suppliers);
+
+  // ── Checklist ──
+  checklistState = d.bond_required_documents.map(i => i.checked);
+  renderChecklist(d.bond_required_documents.map(i=>i.item));
+
+  // Show UI
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('main').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════
+const pageNames = { overview:'Overview', contractor:'Contractor Profile', ownership:'Ownership Structure', affiliates:'Affiliates & Related Entities', banking:'Bank Information', indemnity:'Indemnity', bonding:'Bonding Information', financial:'Financial Information', projects:'Project Experience', references:'References', checklist:'Bond Required Documents' };
+function navigate(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const page = el.dataset.page;
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('topbar-title').textContent = pageNames[page] || page;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EDIT MODE
+// ═══════════════════════════════════════════════════════════
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('edit-bar').classList.toggle('visible', editMode);
+  document.querySelectorAll('.field-value.editable').forEach(el => {
+    if (editMode) {
+      const orig = el.dataset.orig || el.textContent.trim();
+      const key = el.dataset.field;
+      editOriginals[key] = orig;
+      const input = document.createElement('input');
+      input.value = orig === 'Not captured' ? '' : orig;
+      input.dataset.field = key;
+      input.placeholder = orig === 'Not captured' ? 'Enter value…' : orig;
+      el.innerHTML = '';
+      el.appendChild(input);
+      el.classList.remove('missing');
+    } else {
+      const input = el.querySelector('input');
+      if (input) {
+        const newVal = input.value || editOriginals[input.dataset.field] || '';
+        el.textContent = newVal || 'Not captured';
+        el.dataset.orig = newVal;
+        if (!newVal) el.classList.add('missing');
+      }
+    }
+  });
+}
+function saveEdits() {
+  document.querySelectorAll('.field-value.editable').forEach(el => {
+    const input = el.querySelector('input');
+    if (!input) return;
+    const key = input.dataset.field;
+    const oldVal = editOriginals[key] || '';
+    const newVal = input.value.trim();
+    if (newVal !== oldVal) logAudit(key, oldVal, newVal);
+    el.textContent = newVal || 'Not captured';
+    el.dataset.orig = newVal;
+    if (!newVal) el.classList.add('missing'); else el.classList.remove('missing');
+  });
+  editMode = false;
+  document.getElementById('edit-bar').classList.remove('visible');
+}
+function cancelEdits() {
+  document.querySelectorAll('.field-value.editable').forEach(el => {
+    const input = el.querySelector('input');
+    if (!input) return;
+    const key = input.dataset.field;
+    el.textContent = editOriginals[key] || 'Not captured';
+    if (!editOriginals[key]) el.classList.add('missing');
+  });
+  editMode = false;
+  document.getElementById('edit-bar').classList.remove('visible');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AUDIT
+// ═══════════════════════════════════════════════════════════
+function logAudit(field, oldVal, newVal) {
+  const ts = new Date().toLocaleTimeString();
+  auditLog.push({ field, oldVal, newVal, ts, user: 'Underwriter' });
+  renderAuditLog();
+  document.getElementById('audit-count').textContent = auditLog.length;
+  document.getElementById('audit-count').className = 'nav-badge';
+}
+function renderAuditLog() {
+  const body = document.getElementById('audit-body');
+  if (!auditLog.length) { body.innerHTML = '<div class="audit-empty">No overrides recorded yet.<br><span style="font-size:12px;">Edits made by the underwriter will appear here.</span></div>'; return; }
+  body.innerHTML = [...auditLog].reverse().map(e => `
+    <div class="audit-entry">
+      <div class="audit-meta"><span>🕐 ${e.ts}</span><span>👤 ${e.user}</span></div>
+      <div class="audit-field">${e.field.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</div>
+      <div class="audit-change"><span class="audit-old">${e.oldVal||'(empty)'}</span> → <span class="audit-new">${e.newVal||'(cleared)'}</span></div>
+    </div>`).join('');
+}
+function toggleAudit() { document.getElementById('audit-panel').classList.toggle('open'); }
+
+// ═══════════════════════════════════════════════════════════
+//  CHECKLIST
+// ═══════════════════════════════════════════════════════════
+let checklistItems = [];
+function renderChecklist(items) {
+  if (items) checklistItems = items;
+  document.getElementById('checklist-items').innerHTML = checklistItems.map((item, i) => `
+    <div class="checklist-item" onclick="toggleChecklist(${i})">
+      <div class="checklist-box ${checklistState[i] ? 'checked' : ''}">${checklistState[i] ? '✓' : ''}</div>
+      <div style="flex:1;${checklistState[i]?'text-decoration:line-through;color:var(--slate);':''}">${item}</div>
+    </div>`).join('');
+}
+function toggleChecklist(i) {
+  const was = checklistState[i];
+  checklistState[i] = !was;
+  logAudit('Bond Checklist: ' + checklistItems[i].substring(0,40) + '…', was ? 'Checked' : 'Unchecked', checklistState[i] ? 'Checked' : 'Unchecked');
+  renderChecklist();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>

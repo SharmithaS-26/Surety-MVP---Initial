@@ -1,17 +1,3 @@
-"""
-page1_parser.py
-Parses Page 1 of the Built Right CQ scanned form.
-
-KEY LESSONS from token dump analysis:
-  1. EasyOCR often puts the VALUE token ABOVE the LABEL token in Y coordinate
-     (value is in larger/bolder font, rendered at slightly higher position)
-  2. Label and value are sometimes separate tokens, sometimes merged
-  3. Contact name "Butch Taylor, Jr." may be missed entirely or merged
-  
-Strategy: for each field, search ALL tokens within a Y-proximity band
-of the label token, looking both above and below.
-"""
-
 import re
 from .utils import (
     cluster_rows, find_row, join_row_tokens,
@@ -20,13 +6,10 @@ from .utils import (
     checked_labels, yn_from_row,
     clean_text, page_width, page_height, row_cy, row_text,
 )
-
 COL_SPLIT_FRAC  = 0.50
 OWNER_ROW_FRACS = [(0.38, 0.62), (0.63, 0.87)]
 
-
 # ── Universal value extractor ─────────────────────────────────────────────────
-
 def _find_label_token(tokens, *keywords):
     """Find the first token whose text contains any of the given keywords."""
     for kw in keywords:
@@ -35,19 +18,8 @@ def _find_label_token(tokens, *keywords):
                 return tok
     return None
 
-
 def _extract(tokens, *keywords, stop_keywords=None, search_above=True):
-    """
-    Extract value associated with a label keyword.
     
-    Searches for a token containing the keyword, then extracts:
-    1. Everything after the keyword in the same token (merged case)
-    2. Tokens to the RIGHT on the same row
-    3. Tokens ABOVE the label (value rendered higher due to larger font)
-    
-    Args:
-        search_above: Also look at tokens with cy slightly above the label token
-    """
     stop_kws = [k.lower() for k in (stop_keywords or [])]
     all_rows = cluster_rows(tokens)
     
@@ -108,7 +80,6 @@ def _extract(tokens, *keywords, stop_keywords=None, search_above=True):
     
     return ""
 
-
 def _extract_between(tokens, start_kw, end_kw):
     """Extract text between two keywords on the same row."""
     label_tok = _find_label_token(tokens, start_kw)
@@ -132,7 +103,6 @@ def _extract_between(tokens, start_kw, end_kw):
     chunk = re.sub(r'^[\s:*|?$]+', '', chunk)
     return clean_text(chunk)
 
-
 def _yn(tokens, boxes, *keywords, dy=25):
     """Resolve Yes/No for a row containing any of the keywords."""
     all_rows = cluster_rows(tokens)
@@ -144,9 +114,7 @@ def _yn(tokens, boxes, *keywords, dy=25):
                 return val
     return None
 
-
 # ── Owner extraction ──────────────────────────────────────────────────────────
-
 def _extract_owner(tokens, boxes, y1, y2, x1, x2):
     """Extract one owner slot from a pixel region."""
     region = tokens_in_region(tokens, x1, y1, x2, y2)
@@ -259,75 +227,28 @@ def _extract_owner(tokens, boxes, y1, y2, x1, x2):
     spouse_val = ""
     dob_found = False
     
-    # DOB/SSN extraction - handles both merged tokens and separate rows
-    # PyMuPDF often puts value tokens 3-5pt ABOVE their label tokens
     for row in all_rows:
         rt = row_text(row).lower()
-        if "dob" in rt and "ssn" in rt and len(rt) > 5:
-            # Merged row like "DOB 5/10/1950 SSN 786-52-0912"
+        if "dob" in rt and "ssn" in rt:
             full = row_text(row)
             d_idx = full.upper().find("DOB")
             s_idx = full.upper().find("SSN")
-            if d_idx != -1 and s_idx != -1 and s_idx > d_idx:
-                dob_chunk = full[d_idx + 3: s_idx].strip().strip(":").strip()
+            if d_idx != -1 and s_idx != -1:
+                dob_chunk = full[d_idx + 3: s_idx].strip().strip(":")
                 ssn_chunk  = full[s_idx + 3:].strip().strip(":").split()
-                # Only count as values if dob_chunk has actual content (not just whitespace)
-                if dob_chunk and len(dob_chunk) > 2:
-                    if not dob_found:
-                        dob_val = clean_text(dob_chunk)
-                        ssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
-                        dob_found = True
-                    else:
-                        sdob_val = clean_text(dob_chunk)
-                        sssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
-                # If no value in merged token, fall through to proximity search below
-        elif "dob" in rt and len(rt) < 25:
-            # DOB label row - look for value tokens nearby (above or below, ±25px)
-            dob_cy = row_cy(row)
-            val_toks = sorted(
-                [t for t in region
-                 if abs(t["cy"] - dob_cy) <= 25
-                 and t["x"] > row[0]["x2"]
-                 and t["text"].strip().lower() not in ("dob","ssn","spouse","address","city*state*zip","city","name","title")
-                 and len(t["text"].strip()) > 2],
-                key=lambda t: t["x"]
-            )
-            if val_toks and not dob_found:
-                dob_val = val_toks[0]["text"]
-                # SSN is the next token
-                ssn_toks = [t for t in region
-                            if abs(t["cy"] - dob_cy) <= 25
-                            and t["x"] > val_toks[0]["x2"]
-                            and t["text"].strip().lower() not in ("dob","ssn")]
-                if ssn_toks:
-                    ssn_val = ssn_toks[0]["text"]
-                dob_found = True
-            elif val_toks and dob_found and not sdob_val:
-                sdob_val = val_toks[0]["text"]
-                ssn_toks = [t for t in region
-                            if abs(t["cy"] - dob_cy) <= 25
-                            and t["x"] > val_toks[0]["x2"]
-                            and t["text"].strip().lower() not in ("dob","ssn")]
-                if ssn_toks:
-                    sssn_val = ssn_toks[0]["text"]
+                if not dob_found:
+                    dob_val = clean_text(dob_chunk)
+                    ssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
+                    dob_found = True
+                else:
+                    sdob_val = clean_text(dob_chunk)
+                    sssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
         elif "spouse" in rt:
             full = row_text(row)
             sp_idx = full.lower().find("spouse")
             after = full[sp_idx + 6:].strip().strip(":")
             if clean_text(after):
                 spouse_val = clean_text(after)
-            elif not spouse_val:
-                # Spouse name may be on a nearby row (above the label)
-                sp_cy = row_cy(row)
-                nearby = [t for t in region
-                          if abs(t["cy"] - sp_cy) <= 25
-                          and t["x"] > 50
-                          and t["text"].strip().lower() not in
-                          ("spouse","dob","ssn","name","title","address","city")]
-                if nearby:
-                    spouse_val = clean_text(join_row_tokens(
-                        sorted(nearby, key=lambda t: t["x"])
-                    ))
     
     owner = {
         "name":           clean_text(name_val),
@@ -350,18 +271,13 @@ def _extract_owner(tokens, boxes, y1, y2, x1, x2):
         return {}
     return owner if owner["name"] else {}
 
-
 # ── Main parser ───────────────────────────────────────────────────────────────
-
 def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
     print("  [page1_parser] Parsing Page 1…")
-
     pw       = page_width(tokens)
     ph       = page_height(tokens)
     all_rows = cluster_rows(tokens)
-
     # ── General Information ────────────────────────────────────────────────────
-
     # Company name — value token is often ABOVE the label token
     company_name = _extract(tokens, "Company Name", search_above=True)
     
@@ -419,11 +335,9 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
     # Strip "Address:" prefix
     if email and email.lower().startswith("address:"):
         email = email[8:].strip()
-
     # Business type checkboxes
     biz_type_row = find_row(all_rows, "Type of Business")
     business_types = checked_labels(biz_type_row, boxes, max_dx=200)
-
     # Date started
     date_started = _extract_between(tokens, "Date Business Started", "Fed Tax")
     if not date_started:
@@ -433,7 +347,6 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
         date_clean = re.sub(r'[^0-9/]', '', date_started)
         if len(date_clean) >= 4:
             date_started = date_clean
-
     # Fed Tax ID
     fed_tax_id = _extract_between(tokens, "Fed Tax ID", "")
     if not fed_tax_id:
@@ -441,7 +354,6 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
     # Strip "#: " prefix if OCR/PyMuPDF included it
     import re as _re2
     fed_tax_id = _re2.sub(r'^[#:\s]+', '', fed_tax_id).strip()
-
     # NAICS code
     naics_code = _extract_between(tokens, "NAICS Code", "Number")
     if not naics_code:
@@ -451,7 +363,6 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
         naics_clean = re.sub(r'[^0-9]', '', naics_code)
         if naics_clean:
             naics_code = naics_clean
-
     # Number of employees
     employees = _extract_between(tokens, "Number of Employees", "")
     if not employees:
@@ -461,11 +372,9 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
         emp_clean = re.sub(r'[^0-9]', '', employees)
         if emp_clean:
             employees = emp_clean
-
     # Special designations
     desig_row = find_row(all_rows, "Special Designations")
     special_designations = checked_labels(desig_row, boxes, max_dx=150)
-
     general_information = {
         "company_name":          clean_text(company_name),
         "address":               clean_text(address),
@@ -479,11 +388,9 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
         "number_of_employees":   employees,
         "special_designations":  special_designations,
     }
-
     # ── Corporate Officers ─────────────────────────────────────────────────────
     owners = []
     col_split = int(pw * COL_SPLIT_FRAC)
-
     for y_frac_start, y_frac_end in OWNER_ROW_FRACS:
         y1 = int(ph * y_frac_start)
         y2 = int(ph * y_frac_end)
@@ -493,13 +400,11 @@ def parse_page1(tokens: list[dict], boxes: list[dict]) -> dict:
             owners.append(left)
         if right:
             owners.append(right)
-
     # ── Personal indemnification ───────────────────────────────────────────────
     indemn_row = (find_row(all_rows, "indemnification")
                   or find_row(all_rows, "surety", "spouses")
                   or find_row(all_rows, "owners", "spouses"))
     indemn_val = yn_from_row(indemn_row, boxes, dy=25)
-
     print(f"  [page1_parser] Done. {len(owners)} owner(s) found.")
     return {
         "general_information":      general_information,
