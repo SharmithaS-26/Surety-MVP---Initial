@@ -111,7 +111,7 @@ CHECKBOXES  (sorted top-to-bottom, left-to-right)
   497    638     False     empty
   715   1484     False     empty
   716   1652      True    filled
-  935    733      True    filled
+  935    733     False     empty
   935    899     False     empty
  1021   2200     False     empty
  1023   2368      True    filled
@@ -137,14 +137,14 @@ CHECKBOXES  (sorted top-to-bottom, left-to-right)
  2084   2200     False     empty
  2536   1112     False     empty
  2536   1832     False     empty
- 2537   2224      True    filled
+ 2537   2224      True      tick
  2538   1454     False     empty
  2604   1370     False     empty
  2604   1988     False     empty
- 2606   1671      True    filled
+ 2606   1671      True      tick
  2606   2265     False     empty
  2671   1447     False     empty
  2673   1777      True      tick
  2676   2148     False     empty
  2743   1357     False     empty
- 2744   1188      True    filled
+ 2744   1188      True      tick

@@ -1,3 +1,7 @@
+"""
+page2_parser.py (merged-token aware rewrite)
+Handles EasyOCR merging label+value into single tokens.
+"""
 import re
 from .utils import (
     cluster_rows, find_row, after_kw, between_kw,
@@ -30,8 +34,9 @@ def _extract(tokens, *keywords, stop_keywords=None):
             if stop_kws:
                 for sk in stop_kws:
                     si = after.lower().find(sk)
-                    if si > 0:
+                    if si >= 0:
                         after = after[:si]
+                        break
             result = clean_text(after)
             if result:
                 return result
@@ -139,11 +144,19 @@ def parse_page2(tokens, boxes):
     trades_sub = _extract(tokens, "Trades Subcontracted")
     # If the string contains its own beginning repeated, deduplicate
     # e.g. "X...Z. X...W" where X is repeated prefix → keep only first sentence
-    if trades_sub and len(trades_sub) > 30:
-        first20 = trades_sub[:20]
-        second_start = trades_sub.find(first20, 10)
-        if second_start > 0:
-            trades_sub = trades_sub[:second_start].strip()
+    # Remove duplicate text: PyMuPDF reads two text layers producing
+    # two slightly different versions of the same long text.
+    # Fix: find the longest token for this field across all rows,
+    # use only that one (the more complete version wins).
+    if trades_sub and len(trades_sub) > 50:
+        # Find ALL tokens that contain "subcontract" to get all versions
+        all_versions = []
+        for tok in tokens:
+            if "subcontract" in tok["text"].lower() and len(tok["text"]) > 30:
+                all_versions.append(tok["text"].strip())
+        if all_versions:
+            # Use the longest version (most complete)
+            trades_sub = max(all_versions, key=len)
 
     # Union / Non-Union
     union_row    = find_row(all_rows, "Non-Union") or find_row(all_rows, "Union")

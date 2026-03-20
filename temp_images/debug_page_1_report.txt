@@ -94,7 +94,7 @@ CHECKBOXES  (sorted top-to-bottom, left-to-right)
 ======================================================================
    cy     cx   checked     style
 ----------------------------------------------------------------------
- 1068   1324      True    filled
+ 1068   1324      True      tick
  1068   2259     False     empty
  1069   1536     False     empty
  1069   1854     False     empty
@@ -108,3 +108,4 @@ CHECKBOXES  (sorted top-to-bottom, left-to-right)
  1295   1661     False     empty
  2589   2182     False     empty
  2590   2350      True    filled
+ 2661    333     False     empty

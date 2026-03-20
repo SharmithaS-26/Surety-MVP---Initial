@@ -1,3 +1,17 @@
+"""
+page1_parser.py
+Parses Page 1 of the Built Right CQ scanned form.
+
+KEY LESSONS from token dump analysis:
+  1. EasyOCR often puts the VALUE token ABOVE the LABEL token in Y coordinate
+     (value is in larger/bolder font, rendered at slightly higher position)
+  2. Label and value are sometimes separate tokens, sometimes merged
+  3. Contact name "Butch Taylor, Jr." may be missed entirely or merged
+  
+Strategy: for each field, search ALL tokens within a Y-proximity band
+of the label token, looking both above and below.
+"""
+
 import re
 from .utils import (
     cluster_rows, find_row, join_row_tokens,
@@ -23,7 +37,17 @@ def _find_label_token(tokens, *keywords):
 
 
 def _extract(tokens, *keywords, stop_keywords=None, search_above=True):
+    """
+    Extract value associated with a label keyword.
     
+    Searches for a token containing the keyword, then extracts:
+    1. Everything after the keyword in the same token (merged case)
+    2. Tokens to the RIGHT on the same row
+    3. Tokens ABOVE the label (value rendered higher due to larger font)
+    
+    Args:
+        search_above: Also look at tokens with cy slightly above the label token
+    """
     stop_kws = [k.lower() for k in (stop_keywords or [])]
     all_rows = cluster_rows(tokens)
     
@@ -235,28 +259,75 @@ def _extract_owner(tokens, boxes, y1, y2, x1, x2):
     spouse_val = ""
     dob_found = False
     
+    # DOB/SSN extraction - handles both merged tokens and separate rows
+    # PyMuPDF often puts value tokens 3-5pt ABOVE their label tokens
     for row in all_rows:
         rt = row_text(row).lower()
-        if "dob" in rt and "ssn" in rt:
+        if "dob" in rt and "ssn" in rt and len(rt) > 5:
+            # Merged row like "DOB 5/10/1950 SSN 786-52-0912"
             full = row_text(row)
             d_idx = full.upper().find("DOB")
             s_idx = full.upper().find("SSN")
-            if d_idx != -1 and s_idx != -1:
-                dob_chunk = full[d_idx + 3: s_idx].strip().strip(":")
+            if d_idx != -1 and s_idx != -1 and s_idx > d_idx:
+                dob_chunk = full[d_idx + 3: s_idx].strip().strip(":").strip()
                 ssn_chunk  = full[s_idx + 3:].strip().strip(":").split()
-                if not dob_found:
-                    dob_val = clean_text(dob_chunk)
-                    ssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
-                    dob_found = True
-                else:
-                    sdob_val = clean_text(dob_chunk)
-                    sssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
+                # Only count as values if dob_chunk has actual content (not just whitespace)
+                if dob_chunk and len(dob_chunk) > 2:
+                    if not dob_found:
+                        dob_val = clean_text(dob_chunk)
+                        ssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
+                        dob_found = True
+                    else:
+                        sdob_val = clean_text(dob_chunk)
+                        sssn_val = clean_text(ssn_chunk[0]) if ssn_chunk else ""
+                # If no value in merged token, fall through to proximity search below
+        elif "dob" in rt and len(rt) < 25:
+            # DOB label row - look for value tokens nearby (above or below, ±25px)
+            dob_cy = row_cy(row)
+            val_toks = sorted(
+                [t for t in region
+                 if abs(t["cy"] - dob_cy) <= 25
+                 and t["x"] > row[0]["x2"]
+                 and t["text"].strip().lower() not in ("dob","ssn","spouse","address","city*state*zip","city","name","title")
+                 and len(t["text"].strip()) > 2],
+                key=lambda t: t["x"]
+            )
+            if val_toks and not dob_found:
+                dob_val = val_toks[0]["text"]
+                # SSN is the next token
+                ssn_toks = [t for t in region
+                            if abs(t["cy"] - dob_cy) <= 25
+                            and t["x"] > val_toks[0]["x2"]
+                            and t["text"].strip().lower() not in ("dob","ssn")]
+                if ssn_toks:
+                    ssn_val = ssn_toks[0]["text"]
+                dob_found = True
+            elif val_toks and dob_found and not sdob_val:
+                sdob_val = val_toks[0]["text"]
+                ssn_toks = [t for t in region
+                            if abs(t["cy"] - dob_cy) <= 25
+                            and t["x"] > val_toks[0]["x2"]
+                            and t["text"].strip().lower() not in ("dob","ssn")]
+                if ssn_toks:
+                    sssn_val = ssn_toks[0]["text"]
         elif "spouse" in rt:
             full = row_text(row)
             sp_idx = full.lower().find("spouse")
             after = full[sp_idx + 6:].strip().strip(":")
             if clean_text(after):
                 spouse_val = clean_text(after)
+            elif not spouse_val:
+                # Spouse name may be on a nearby row (above the label)
+                sp_cy = row_cy(row)
+                nearby = [t for t in region
+                          if abs(t["cy"] - sp_cy) <= 25
+                          and t["x"] > 50
+                          and t["text"].strip().lower() not in
+                          ("spouse","dob","ssn","name","title","address","city")]
+                if nearby:
+                    spouse_val = clean_text(join_row_tokens(
+                        sorted(nearby, key=lambda t: t["x"])
+                    ))
     
     owner = {
         "name":           clean_text(name_val),

@@ -6,13 +6,16 @@
     "primary_contact": "Butch Taylor, Jr.",
     "email": "btyalorjr@builtright.com",
     "type_of_business": [
-      "LLC"
+      "LLC",
+      "LLP"
     ],
     "date_business_started": "09/01/75",
     "fed_tax_id": "00-00000",
     "primary_naics_code": "236220",
     "number_of_employees": "100",
-    "special_designations": []
+    "special_designations": [
+      "8A"
+    ]
   },
   "owners": [
     {
@@ -34,7 +37,7 @@
   "business_information": {
     "type_of_work_performed": "Road Builder",
     "trades_self_performed": "Asphalt, Concrete and Utilities",
-    "trades_subcontracted": "Subcontract 100% outside of minor punch list and carpentry. Have considered 100% outside of minor punch list and carpentry. Have considered adding in-house electrical.",
+    "trades_subcontracted": "Subcontract 100% outside of minor punch list and carpentry. Have considered",
     "union_status": null,
     "geographic_territory": "Central Florida",
     "work_acquired_bid_pct": "95",
@@ -67,12 +70,15 @@
     "fiscal_year_end": "12/31",
     "years_prepared_statements": "3",
     "tax_basis": [
+      "Cash",
       "% of Completion"
     ],
     "financial_statement_basis": [
+      "Cash",
       "Completed Job"
     ],
     "financial_statement_level": [
+      "CPA Audit",
       "CPA Review"
     ],
     "fulltime_accountant_on_staff": "Yes",
@@ -84,7 +90,7 @@
     "bank_name": "Bank of Tampa",
     "contact_name": "Jordan Belfort, VP",
     "bank_address": "1 N Dale Mabry HWY Tampa, Florida 33609",
-    "bank_phone": "Contract",
+    "bank_phone": "",
     "bank_email": "",
     "line_of_credit": "Yes",
     "total_line_of_credit": "500,000",
@@ -95,26 +101,26 @@
   "projects": [
     {
       "project_number": "1",
-      "project_name": "",
-      "year_complete": "",
-      "final_contract_price": "",
-      "gross_profit": "",
+      "project_name": "FDOT",
+      "year_complete": "2025",
+      "final_contract_price": "10MM",
+      "gross_profit": "1MM",
       "for_whom_contact": "Pinellas County"
     },
     {
       "project_number": "2",
       "project_name": "FDOT",
       "year_complete": "2022",
-      "final_contract_price": " 7.5MM",
-      "gross_profit": " 500M",
+      "final_contract_price": "7.5MM",
+      "gross_profit": "500M",
       "for_whom_contact": "Hillsboro County"
     },
     {
       "project_number": "3",
       "project_name": "FDOT",
       "year_complete": "2024",
-      "final_contract_price": " 2.5MM",
-      "gross_profit": " 200M",
+      "final_contract_price": "2.5MM",
+      "gross_profit": "200M",
       "for_whom_contact": "Pinellas County"
     },
     {
@@ -147,12 +153,12 @@
         "contact": "Jim Tracks"
       },
       {
-        "company": "Millworkers International International",
+        "company": "Millworkers International",
         "phone": "",
         "contact": "Woody Roberts"
       },
       {
-        "company": "Empowered Electrical Electrical",
+        "company": "Empowered Electrical",
         "phone": "",
         "contact": "Frank Voltz"
       }
@@ -166,7 +172,7 @@
     ],
     "suppliers": [
       {
-        "company": "ABC Supply House House",
+        "company": "ABC Supply House",
         "phone": "813-800-9000",
         "contact": "Jim Woodman"
       }

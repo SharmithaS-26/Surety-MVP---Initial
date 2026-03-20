@@ -1,3 +1,18 @@
+"""
+page3_parser.py  (robust)
+Parses Page 3 of the Built Right CQ scanned form.
+
+Sections:
+  • Banking
+  • Project Experience  (5 largest completed contracts, 2-row entries)
+  • References          (3 sub-tables: Subcontractors, Owners & Architects, Suppliers)
+
+All table parsing uses adaptive row clustering — no hard-coded Y values.
+Section boundaries are found by keyword scanning the token stream.
+Project entries are anchored by number tokens (1. / 2. / … / 5.).
+Reference sub-tables are located by their header keywords.
+"""
+
 import re
 from .utils import (
     cluster_rows, find_row, after_kw, between_kw,
@@ -25,8 +40,9 @@ def _extract(tokens, *keywords, stop_keywords=None):
             if stop_kws:
                 for sk in stop_kws:
                     si = after.lower().find(sk)
-                    if si > 0:
+                    if si >= 0:   # >= 0 catches stop kw at start of result too
                         after = after[:si]
+                        break
             result = clean_text(after)
             if result:
                 return result
@@ -35,6 +51,18 @@ def _extract(tokens, *keywords, stop_keywords=None):
 
 
 ROW_CLUSTER_GAP      = 14
+
+
+def _dedup_words(text: str) -> str:
+    """Remove consecutive duplicate words: 'Foo Foo Bar Bar' → 'Foo Bar'"""
+    if not text:
+        return text
+    words = text.split()
+    result = [words[0]] if words else []
+    for w in words[1:]:
+        if w != result[-1]:
+            result.append(w)
+    return " ".join(result)
 PROJECT_ROW_PAIR_GAP = 120  # increased: Row B (contact) can be far below Row A at 300 DPI
 
 # Page-fraction bands
@@ -113,7 +141,7 @@ def _parse_banking(tokens, boxes, ph, pw):
     bank_name    = _extract(bank_toks, "Name of Bank", stop_keywords=["Contact"])
     contact_name = _extract(bank_toks, "Contact Name")
     bank_address = _extract(bank_toks, "Bank Address", "Bank Addr")
-    bank_phone   = _extract(bank_toks, "Bank Phone", stop_keywords=["Contract Email", "Email"])
+    bank_phone   = _extract(bank_toks, "Bank Phone", stop_keywords=["Contract Email", "Contract", "Email"])
     bank_email   = ""
     for tok in bank_toks:
         if "@" in tok["text"]:
@@ -174,31 +202,52 @@ def _parse_projects(tokens, ph, pw):
 
         is_num, digit = _is_num_row(row)
         if is_num:
-            name_toks   = toks_in_x_band(row, *PROJ_COL["name"],   pw)
-            year_toks   = toks_in_x_band(row, *PROJ_COL["year"],   pw)
-            price_toks  = toks_in_x_band(row, *PROJ_COL["price"],  pw)
-            profit_toks = toks_in_x_band(row, *PROJ_COL["profit"], pw)
+            # PyMuPDF places the number token ("1.") BELOW the data tokens
+            # (FDOT, 2025, $10MM are at cy=933, "1." is at cy=949)
+            # So look for data in: (1) this row, (2) the row immediately ABOVE
+            data_row = row
+            num_cy   = row_cy(row)
+
+            if i > 0:
+                prev_row = rows[i - 1]
+                prev_cy  = row_cy(prev_row)
+                # If previous row is within 25px above and has data columns
+                if 0 < num_cy - prev_cy <= 25 and not _is_skip(row_text(prev_row)):
+                    is_prev_num, _ = _is_num_row(prev_row)
+                    if not is_prev_num:
+                        data_row = prev_row  # use the row above as data source
+
+            import re as _re
+            name_toks   = toks_in_x_band(data_row, *PROJ_COL["name"],   pw)
+            year_toks   = toks_in_x_band(data_row, *PROJ_COL["year"],   pw)
+            price_toks  = toks_in_x_band(data_row, *PROJ_COL["price"],  pw)
+            profit_toks = toks_in_x_band(data_row, *PROJ_COL["profit"], pw)
 
             # Strip leading digit token from name
             name_toks = [t for t in name_toks
                          if not _NUM_RE.match(t["text"].strip().rstrip("."))]
 
-            # Clean project name: strip leading number prefix e.g. "1.FDOT" → "FDOT"
+            # Clean project name
             raw_name = clean_text(join_row_tokens(name_toks))
-            import re as _re
             raw_name = _re.sub(r'^[1-5][.)\s]+', '', raw_name).strip()
-            
-            # Clean year: strip leading non-digit chars e.g. "12025" → "2025"
+            raw_name_words = raw_name.split()
+            raw_name_dedup = []
+            for w in raw_name_words:
+                if not raw_name_dedup or w != raw_name_dedup[-1]:
+                    raw_name_dedup.append(w)
+            raw_name = " ".join(raw_name_dedup)
+
+            # Clean year
             raw_year = clean_text(join_row_tokens(year_toks))
             year_match = _re.search(r'(20\d{2}|19\d{2})', raw_year)
             raw_year = year_match.group(1) if year_match else raw_year
-            
+
             entry = {
                 "project_number":       digit,
                 "project_name":         raw_name,
                 "year_complete":        raw_year,
-                "final_contract_price": clean_text(join_row_tokens(price_toks)).lstrip("$"),
-                "gross_profit":         clean_text(join_row_tokens(profit_toks)).lstrip("$"),
+                "final_contract_price": clean_text(join_row_tokens(price_toks)).lstrip("$").strip(),
+                "gross_profit":         clean_text(join_row_tokens(profit_toks)).lstrip("$").strip(),
                 "for_whom_contact":     "",
             }
 
@@ -251,7 +300,11 @@ def _parse_one_ref_table(tokens, y1, y2, pw):
             [t for t in row if t["cx"] > pw * REF_COL["contact"][0]]))
 
         if company or contact:
-            entries.append({"company": company, "phone": phone, "contact": contact})
+            entries.append({
+                "company": _dedup_words(company),
+                "phone":   phone,
+                "contact": _dedup_words(contact),
+            })
 
     return entries
 
